@@ -9,34 +9,62 @@
     @media (prefers-color-scheme: light){ :root{ --bg:#f6f7f9; --card:#ffffff; --fg:#141417; --muted:#5b5b66; --accent:#c9824b; } }
     *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
     html,body{ height:100%; margin:0; }
-    body{ background:var(--bg); color:var(--fg); font:20px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; }
-    .app{ min-height:100%; max-width:600px; margin:0 auto; padding:env(safe-area-inset-top) var(--pad) calc(10px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:10px; }
-    header{ display:flex; flex-direction:column; gap:4px; margin-bottom:4px; }
-    h1{ font-size:32px; margin:0; font-weight:700; }
-    .meta-line{ display:flex; gap:12px; align-items:center; justify-content:space-between; }
-    .card-wrap{ flex:1; display:flex; align-items:flex-start; justify-content:center; min-height:0; padding-top:10px; }
-    .card{ width:100%; min-height:60vh; background:var(--card); border-radius:var(--radius); padding:16px; box-shadow:0 10px 32px rgba(0,0,0,.35); position:relative; transform-style:preserve-3d; transition:transform .45s ease; display:flex; align-items:stretch; justify-content:center; user-select:none; text-align:left; }
+    body{ background:var(--bg); color:var(--fg); font:20px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif; -webkit-text-size-adjust:100%; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden; }
+    html,body{ -webkit-overflow-scrolling:touch; }
+    .app{ min-height:100%; max-width:600px; margin:0 auto; padding:max(env(safe-area-inset-top),8px) 12px max(calc(10px + env(safe-area-inset-bottom)),16px); display:flex; flex-direction:column; gap:8px; }
+    @media (min-width:640px){ .app{ padding:env(safe-area-inset-top) var(--pad) calc(10px + env(safe-area-inset-bottom)); gap:10px; } }
+    header{ display:flex; flex-direction:column; gap:6px; margin-bottom:4px; }
+    @media (min-width:640px){ header{ gap:8px; margin-bottom:8px; } }
+    h1{ font-size:20px; margin:0; font-weight:700; line-height:1.2; }
+    @media (min-width:640px){ h1{ font-size:28px; } }
+    @media (min-width:768px){ h1{ font-size:32px; } }
+    .meta-line{ display:flex; gap:8px; align-items:center; justify-content:space-between; }
+    @media (min-width:640px){ .meta-line{ gap:12px; } }
+    .card-wrap{ flex:1; display:flex; align-items:flex-start; justify-content:center; min-height:0; padding-top:8px; }
+    @media (min-width:640px){ .card-wrap{ padding-top:10px; } }
+    .card{ width:100%; min-height:50vh; background:var(--card); border-radius:16px; padding:16px; box-shadow:0 10px 32px rgba(0,0,0,.35); position:relative; transform-style:preserve-3d; transition:transform .45s ease; display:flex; align-items:stretch; justify-content:center; user-select:none; text-align:left; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+    @media (min-width:640px){ .card{ min-height:46vh; border-radius:var(--radius); padding:20px; } }
     .card.flipped{ transform:rotateY(180deg); }
-    .face{ position:absolute; inset:0; padding:14px 16px 16px; backface-visibility:hidden; display:flex; flex-direction:column; gap:6px; overflow:visible; }
+    .face{ position:absolute; inset:0; padding:16px; backface-visibility:hidden; display:flex; flex-direction:column; gap:8px; overflow:visible; }
+    @media (min-width:640px){ .face{ padding:20px 24px; gap:12px; } }
     .front{ justify-content:center; align-items:flex-start; }
     .back{ transform:rotateY(180deg); justify-content:flex-start; }
-    .title{ font-size:40px; font-weight:700; margin:0 0 6px 0; }
-    .label-line{ font-size:18px; color:var(--muted); text-transform:uppercase; letter-spacing:.14em; }
-    .body{ font-size:24px; line-height:1.7; margin:0; }
-    .controls{ display:flex; gap:8px; margin-top:8px; position:relative; z-index:5; }
-    button{ flex:1; min-height:72px; border-radius:999px; border:0; font-weight:600; font-size:22px; background:var(--accent); color:#111; box-shadow:0 6px 18px rgba(0,0,0,.25); touch-action:manipulation; }
+    .title{ font-size:28px; font-weight:700; margin:0 0 8px 0; line-height:1.2; }
+    @media (min-width:640px){ .title{ font-size:36px; } }
+    @media (min-width:768px){ .title{ font-size:40px; } }
+    .label-line{ font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:.14em; }
+    @media (min-width:640px){ .label-line{ font-size:16px; } }
+    @media (min-width:768px){ .label-line{ font-size:18px; } }
+    .body{ font-size:18px; line-height:1.6; margin:0; }
+    @media (min-width:640px){ .body{ font-size:20px; line-height:1.7; } }
+    @media (min-width:768px){ .body{ font-size:24px; } }
+    .controls{ display:flex; flex-direction:column; gap:8px; margin-top:8px; position:relative; z-index:5; }
+    @media (min-width:640px){ .controls{ flex-direction:row; } }
+    .controls-row{ display:flex; gap:8px; }
+    button{ flex:1; min-height:48px; border-radius:999px; border:0; font-weight:600; font-size:14px; background:var(--accent); color:#111; box-shadow:0 6px 18px rgba(0,0,0,.25); touch-action:manipulation; -webkit-tap-highlight-color:transparent; transition:opacity 0.15s; }
+    button:active{ opacity:0.8; }
+    @media (min-width:640px){ button{ min-height:52px; font-size:16px; } }
+    @media (min-width:768px){ button{ min-height:60px; font-size:18px; } }
     button.secondary{ background:transparent; color:var(--fg); border:1px solid rgba(255,255,255,.18); box-shadow:none; }
-    .hint{ font-size:16px; color:var(--muted); margin-top:4px; text-align:center; }
-    .pager{ font-size:18px; color:var(--muted); }
-    .hotzones{ position:fixed; left:0; right:0; top:0; bottom:calc(120px + env(safe-area-inset-bottom)); pointer-events:none; z-index:1; }
+    button.secondary:active{ opacity:0.7; }
+    .hint{ font-size:12px; color:var(--muted); margin-top:4px; text-align:center; padding:0 8px; }
+    @media (min-width:640px){ .hint{ font-size:14px; } }
+    .pager{ font-size:14px; color:var(--muted); white-space:nowrap; }
+    @media (min-width:640px){ .pager{ font-size:16px; } }
+    @media (min-width:768px){ .pager{ font-size:18px; } }
+    .hotzones{ position:fixed; left:0; right:0; top:0; bottom:calc(140px + env(safe-area-inset-bottom)); pointer-events:none; z-index:1; }
+    @media (min-width:640px){ .hotzones{ bottom:calc(120px + env(safe-area-inset-bottom)); } }
     .hotzones > div{ position:absolute; top:0; bottom:0; width:33%; pointer-events:auto; }
     .hotzones .prev{ left:0; }
     .hotzones .flip{ left:33%; width:34%; }
     .hotzones .next{ right:0; }
-    #deckSelect{flex:1;background:var(--card);color:var(--fg);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 36px 10px 12px;font-size:18px;cursor:pointer;appearance:none;-webkit-appearance:none;-moz-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f5f5f7' d='M6 9L1 4h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;position:relative;z-index:10;}
+    #deckSelect{flex:1;background:var(--card);color:var(--fg);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 36px 10px 12px;font-size:14px;cursor:pointer;appearance:none;-webkit-appearance:none;-moz-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f5f5f7' d='M6 9L1 4h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;position:relative;z-index:10;min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+    @media (min-width:640px){ #deckSelect{font-size:16px;padding:12px 40px 12px 14px;background-position:right 14px center;} }
+    @media (min-width:768px){ #deckSelect{font-size:18px;} }
     #deckSelect option{background:var(--card);color:var(--fg);padding:8px;}
-    .pager{font-size:18px;color:var(--muted);white-space:nowrap;}
-    @media (max-width:600px){ h1{ font-size:28px; } .title{ font-size:36px; } .body{ font-size:22px; } .card{ min-height:65vh; } }
+    .mobile-text{display:inline;}
+    .desktop-text{display:none;}
+    @media (min-width:640px){ .mobile-text{display:none;} .desktop-text{display:inline;} }
   </style>
   <meta name="description" content="Mobile-optimized flashcards for Old Town Scottsdale tours." />
   <meta name="theme-color" content="#0b0b0c" />
@@ -64,12 +92,16 @@
       </article>
     </div>
     <div class="controls" aria-label="Card controls">
-      <button id="prevBtn" class="secondary" aria-label="Previous card">◀ Prev</button>
-      <button id="voiceBtn" class="secondary" aria-label="Toggle voice narration">Voice</button>
-      <button id="shuffleBtn" class="secondary" aria-label="Toggle shuffle" aria-pressed="false">Shuffle: Off</button>
-      <button id="autoBtn" class="secondary" aria-label="Start auto advance" aria-pressed="false">Auto: Off</button>
-      <button id="flipBtn" aria-label="Flip card">Flip</button>
-      <button id="nextBtn" class="secondary" aria-label="Next card">Next ▶</button>
+      <div class="controls-row">
+        <button id="prevBtn" class="secondary" aria-label="Previous card">◀ Prev</button>
+        <button id="flipBtn" aria-label="Flip card">Flip</button>
+        <button id="nextBtn" class="secondary" aria-label="Next card">Next ▶</button>
+      </div>
+      <div class="controls-row">
+        <button id="voiceBtn" class="secondary" aria-label="Toggle voice narration">Voice</button>
+        <button id="shuffleBtn" class="secondary" aria-label="Toggle shuffle" aria-pressed="false"><span class="mobile-text">Shuffle</span><span class="desktop-text">Shuffle: Off</span></button>
+        <button id="autoBtn" class="secondary" aria-label="Start auto advance" aria-pressed="false"><span class="mobile-text">Auto</span><span class="desktop-text">Auto: Off</span></button>
+      </div>
     </div>
     <div class="hint">Tap card to flip • Swipe or use arrows to change cards</div>
   </div>

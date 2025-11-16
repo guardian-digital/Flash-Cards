@@ -64,19 +64,19 @@ export function FlashCard({ card, flipped, onFlip }: FlashCardProps) {
         }
       }}
       className={[
-        'w-full min-h-[46vh] bg-surface rounded-lg p-5 shadow-overlay',
+        'w-full min-h-[50vh] sm:min-h-[46vh] bg-surface rounded-xl sm:rounded-lg p-4 sm:p-5 md:p-6 shadow-overlay',
         'relative preserve-3d transition-transform duration-500 ease-out',
-        'flex items-stretch justify-center select-none text-left',
+        'flex items-stretch justify-center select-none text-left touch-manipulation',
         flipped ? '[transform:rotateY(180deg)]' : '',
       ].join(' ')}
     >
-      <section ref={frontRef} className="absolute inset-0 p-5 md:p-6 backface-hidden flex flex-col gap-3 justify-center items-start overflow-visible">
-        <div className="uppercase tracking-[0.14em] text-lg text-muted">{label}</div>
-        <h2 className="text-4xl md:text-5xl font-bold m-0">{card.front}</h2>
+      <section ref={frontRef} className="absolute inset-0 p-4 sm:p-5 md:p-6 backface-hidden flex flex-col gap-2 sm:gap-3 justify-center items-start overflow-visible">
+        <div className="uppercase tracking-[0.14em] text-sm sm:text-base md:text-lg text-muted">{label}</div>
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold m-0 leading-tight">{card.front}</h2>
       </section>
-      <section ref={backRef} className="absolute inset-0 p-5 md:p-6 [transform:rotateY(180deg)] backface-hidden flex flex-col gap-4 justify-start overflow-visible">
-        <h2 className="text-4xl md:text-5xl font-bold m-0">{card.front}</h2>
-        <p className="text-2xl md:text-3xl leading-relaxed m-0 text-text/90">{card.back}</p>
+      <section ref={backRef} className="absolute inset-0 p-4 sm:p-5 md:p-6 [transform:rotateY(180deg)] backface-hidden flex flex-col gap-3 sm:gap-4 justify-start overflow-visible">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold m-0 leading-tight">{card.front}</h2>
+        <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl leading-relaxed m-0 text-text/90">{card.back}</p>
       </section>
     </article>
   );

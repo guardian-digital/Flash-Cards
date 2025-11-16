@@ -54,6 +54,7 @@ This repository uses:
 - **CodeQL**: Automated security analysis
 - **npm audit**: Dependency vulnerability scanning
 - **Gitleaks**: Secret scanning in CI/CD
+- **TruffleHog**: Advanced secret detection with verification
 
 All security checks run automatically on:
 - Every push to `main`

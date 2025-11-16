@@ -355,15 +355,15 @@ export default function HomePage() {
         <meta name="theme-color" content={BRAND.colors.background} />
       </Head>
       <div
-        className="min-h-full max-w-[600px] mx-auto px-4 pt-[env(safe-area-inset-top)] pb-[calc(10px+env(safe-area-inset-bottom))] flex flex-col gap-2"
+        className="min-h-full max-w-[600px] mx-auto px-3 sm:px-4 pt-[max(env(safe-area-inset-top),8px)] pb-[max(calc(10px+env(safe-area-inset-bottom)),16px)] flex flex-col gap-2 sm:gap-3"
         role="application"
         aria-label="Old Town Scottsdale Tour Flashcards"
       >
-        <header className="flex flex-col gap-1 mb-1">
-          <h1 className="text-2xl md:text-3xl font-bold m-0">Old Town Scottsdale Highlights</h1>
-          <div className="flex gap-3 items-center justify-between">
+        <header className="flex flex-col gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold m-0 leading-tight">Old Town Scottsdale Highlights</h1>
+          <div className="flex gap-2 sm:gap-3 items-center justify-between">
             <DeckSelect options={deckOptions} value={currentDeck.id} onChange={setDeckById} />
-            <span className="text-lg text-muted whitespace-nowrap" aria-live="polite">
+            <span className="text-sm sm:text-base md:text-lg text-muted whitespace-nowrap" aria-live="polite">
               {hasCards ? `${index + 1} / ${currentDeck.cards.length}` : '0 / 0'}
             </span>
           </div>
@@ -404,7 +404,7 @@ export default function HomePage() {
           onToggleAuto={toggleAuto}
           autoEnabled={autoEnabled}
         />
-        <div className="text-center text-muted text-sm mt-1">
+        <div className="text-center text-muted text-xs sm:text-sm mt-1 sm:mt-2 px-2">
           Tap card to flip • Swipe or use arrows to change cards
         </div>
       </div>
