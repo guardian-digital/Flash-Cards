@@ -361,13 +361,12 @@ export default function HomePage() {
       >
         <header className="flex flex-col gap-1 mb-1">
           <h1 className="text-2xl md:text-3xl font-bold m-0">Old Town Scottsdale Highlights</h1>
-          <div className="flex gap-2 items-center justify-between text-base md:text-lg text-muted">
-            <span className="font-semibold" aria-live="polite">{currentDeck.label}</span>
-            <span className="text-muted" aria-live="polite">
+          <div className="flex gap-3 items-center justify-between">
+            <DeckSelect options={deckOptions} value={currentDeck.id} onChange={setDeckById} />
+            <span className="text-lg text-muted whitespace-nowrap" aria-live="polite">
               {hasCards ? `${index + 1} / ${currentDeck.cards.length}` : '0 / 0'}
             </span>
           </div>
-          <DeckSelect options={deckOptions} value={currentDeck.id} onChange={setDeckById} />
         </header>
 
         <div className="flex-1 flex items-center justify-center">

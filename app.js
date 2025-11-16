@@ -129,7 +129,6 @@ var allDeck = {
 
 // Elements
 var deckSelect=document.getElementById('deckSelect');
-var deckLabel=document.getElementById('deckLabel');
 var pagerEl=document.getElementById('pager');
 var cardEl=document.getElementById('card');
 var frontDeckLabel=document.getElementById('frontDeckLabel');
@@ -217,7 +216,6 @@ function setDeckById(id){
     found = allDeck;
   }
   currentDeck = found;
-  deckLabel.textContent = found.label;
   frontDeckLabel.textContent = found.label;
   index = 0; flipped=false;
   render();
@@ -401,7 +399,7 @@ function toggleAuto(){
   }
 }
 
-deckLabel.textContent='All Highlights'; frontDeckLabel.textContent='All Highlights';
+frontDeckLabel.textContent='All Highlights';
 function render(){
   var cards=currentDeck.cards || [];
   if(!cards.length){ frontTitleEl.textContent='No cards'; backTitleEl.textContent='No cards'; backTextEl.textContent='This deck is empty.'; pagerEl.textContent='0 / 0'; return; }
