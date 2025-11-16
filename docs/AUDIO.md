@@ -18,37 +18,47 @@ Cards are identified by slugified front text:
 - "Soleri Bridge" → `soleri-bridge.mp3`
 - "Museum of the West" → `museum-of-the-west.mp3`
 
-## Generating Audio Files
+## Automated Generation (Recommended)
 
-### Using ElevenLabs
+### Quick Start
 
-1. **Export card data** (run this in browser console on the live site):
-```javascript
-// Get all unique card fronts
-const fronts = [...new Set(DECKS.flatMap(d => d.cards.map(c => c.front)))];
-console.log(JSON.stringify(fronts, null, 2));
-```
-
-2. **Batch generate with ElevenLabs API**:
+1. **Install dependencies**:
 ```bash
-# Example script (requires ElevenLabs API key)
-for front in $(cat cards.txt); do
-  slug=$(echo "$front" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//')
-  curl -X POST "https://api.elevenlabs.io/v1/text-to-speech/YOUR_VOICE_ID" \
-    -H "xi-api-key: YOUR_API_KEY" \
-    -H "Content-Type: application/json" \
-    -d "{\"text\":\"$front. [back text here]\",\"model_id\":\"eleven_monolingual_v1\",\"voice_settings\":{\"stability\":0.5,\"similarity_boost\":0.75}}" \
-    --output "docs/audio/$slug.mp3"
-done
+pnpm install
 ```
 
-3. **Recommended settings**:
-   - Format: MP3
-   - Bitrate: 48-64 kbps (mono)
-   - Sample rate: 22.05-24 kHz
-   - Voice: Choose a warm, clear voice (e.g., "Rachel", "Domi")
+2. **Create `.env` file** (in project root):
+```env
+ELEVENLABS_API_KEY=your_api_key_here
+ELEVENLABS_VOICE_ID=21m00Tcm4TlvDq8ikWAM
+```
+
+   **Note**: The `.env` file is gitignored and will NOT be committed. TruffleHog won't scan it.
+
+3. **Run the generator**:
+```bash
+pnpm generate-audio
+```
+
+The script will:
+- Read all cards from `lib/data.ts`
+- Generate MP3s for each unique card
+- Save to both `docs/audio/` and `public/audio/`
+- Skip files that already exist
+- Rate limit to 1 request/second (to avoid API limits)
+
+### Voice Selection
+
+Get your voice ID from: https://elevenlabs.io/app/voices
+
+Popular voices:
+- **Rachel**: `21m00Tcm4TlvDq8ikWAM` (default - warm, clear)
+- **Domi**: `AZnzlk1XvdvUeBnXmlld` (energetic)
+- **Bella**: `EXAVITQu4vr4xnSDxMaL` (soft, friendly)
 
 ### Manual Generation
+
+If you prefer to generate manually:
 
 1. Use ElevenLabs web interface
 2. For each card, generate: `"[front]. [back]"`
