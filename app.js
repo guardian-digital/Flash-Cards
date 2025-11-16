@@ -154,18 +154,38 @@ var shuffleMode=false;
 var autoTimer=null;
 
 // Populate selector
-if(deckSelect){
-  var options=[{id:'all',label:'All Highlights'}].concat(DECKS.map(function(d){return {id:d.id,label:d.label};}));
-  options.forEach(function(opt){
-    var o=document.createElement('option'); 
-    o.value=opt.id; 
-    o.textContent=opt.label; 
-    deckSelect.appendChild(o);
+function populateDeckSelector(){
+  if(!deckSelect){
+    console.error('Deck selector element not found!');
+    return;
+  }
+  
+  // Clear any existing options
+  deckSelect.innerHTML='';
+  
+  // Add "All Highlights" option
+  var allOption=document.createElement('option');
+  allOption.value='all';
+  allOption.textContent='All Highlights';
+  deckSelect.appendChild(allOption);
+  
+  // Add each deck option
+  DECKS.forEach(function(deck){
+    var opt=document.createElement('option');
+    opt.value=deck.id;
+    opt.textContent=deck.label;
+    deckSelect.appendChild(opt);
   });
+  
   deckSelect.value='all';
-  console.log('Deck selector populated with', options.length, 'options');
-} else {
-  console.error('Deck selector element not found!');
+  console.log('Deck selector populated with', DECKS.length + 1, 'options:', DECKS.map(function(d){return d.label;}).join(', '));
+}
+
+// Initialize when DOM is ready
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',populateDeckSelector);
+}else{
+  populateDeckSelector();
 }
 
 function setDeckById(id){
