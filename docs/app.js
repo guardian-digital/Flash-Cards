@@ -157,18 +157,29 @@ var autoTimer=null;
 if(deckSelect){
   var options=[{id:'all',label:'All Highlights'}].concat(DECKS.map(function(d){return {id:d.id,label:d.label};}));
   options.forEach(function(opt){
-    var o=document.createElement('option'); o.value=opt.id; o.textContent=opt.label; deckSelect.appendChild(o);
+    var o=document.createElement('option'); 
+    o.value=opt.id; 
+    o.textContent=opt.label; 
+    deckSelect.appendChild(o);
   });
   deckSelect.value='all';
+  console.log('Deck selector populated with', options.length, 'options');
+} else {
+  console.error('Deck selector element not found!');
 }
 
 function setDeckById(id){
   var found = (id==='all') ? allDeck : (DECKS.find(function(d){return d.id===id;}) || allDeck);
+  if(!found){
+    console.error('Deck not found:', id);
+    found = allDeck;
+  }
   currentDeck = found;
   deckLabel.textContent = found.label;
   frontDeckLabel.textContent = found.label;
   index = 0; flipped=false;
   render();
+  if(narrationEnabled) speakCurrent();
 }
 
 // Generate slug from card front text
@@ -284,7 +295,14 @@ voiceBtn.addEventListener('click',toggleVoice);
 shuffleBtn.addEventListener('click',toggleShuffle);
 autoBtn.addEventListener('click',toggleAuto);
 hzFlip.addEventListener('click',flip); hzNext.addEventListener('click',next); hzPrev.addEventListener('click',prev);
-if(deckSelect){ deckSelect.addEventListener('change', function(e){ stopAuto(); setDeckById(e.target.value); }); }
+if(deckSelect){ 
+  deckSelect.addEventListener('change', function(e){ 
+    var selectedId = e.target.value;
+    console.log('Deck selected:', selectedId);
+    stopAuto(); 
+    setDeckById(selectedId); 
+  }); 
+}
 cardEl.addEventListener('keydown',function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); flip(); } if(e.key==='ArrowRight'){ next(); } if(e.key==='ArrowLeft'){ prev(); } });
 var startX=0,startY=0,moved=false; function touchStart(x,y){ startX=x; startY=y; moved=false; } function touchMove(x,y){ if(Math.abs(x-startX)>12) moved=true; } function touchEnd(x,y){ var dx=x-startX; var dy=y-startY; if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){ if(dx<0){ next(); } else { prev(); } } else { if(!moved) flip(); } }
 cardEl.addEventListener('touchstart',function(e){ var t=e.touches[0]; touchStart(t.clientX,t.clientY); },{passive:true});
