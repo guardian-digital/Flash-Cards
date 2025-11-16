@@ -153,12 +153,23 @@ var narrationEnabled=false;
 var shuffleMode=false;
 var autoTimer=null;
 
+// Deck selector change handler
+function handleDeckChange(e){ 
+  var selectedId = e.target.value;
+  console.log('Deck selected:', selectedId);
+  stopAuto(); 
+  setDeckById(selectedId); 
+}
+
 // Populate selector
 function populateDeckSelector(){
   if(!deckSelect){
     console.error('Deck selector element not found!');
     return;
   }
+  
+  // Remove existing listener if any
+  deckSelect.removeEventListener('change', handleDeckChange);
   
   // Clear any existing options
   deckSelect.innerHTML='';
@@ -179,6 +190,9 @@ function populateDeckSelector(){
   
   deckSelect.value='all';
   console.log('Deck selector populated with', DECKS.length + 1, 'options:', DECKS.map(function(d){return d.label;}).join(', '));
+  
+  // Attach event listener
+  deckSelect.addEventListener('change', handleDeckChange);
 }
 
 // Initialize when DOM is ready
@@ -315,14 +329,6 @@ voiceBtn.addEventListener('click',toggleVoice);
 shuffleBtn.addEventListener('click',toggleShuffle);
 autoBtn.addEventListener('click',toggleAuto);
 hzFlip.addEventListener('click',flip); hzNext.addEventListener('click',next); hzPrev.addEventListener('click',prev);
-if(deckSelect){ 
-  deckSelect.addEventListener('change', function(e){ 
-    var selectedId = e.target.value;
-    console.log('Deck selected:', selectedId);
-    stopAuto(); 
-    setDeckById(selectedId); 
-  }); 
-}
 cardEl.addEventListener('keydown',function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); flip(); } if(e.key==='ArrowRight'){ next(); } if(e.key==='ArrowLeft'){ prev(); } });
 var startX=0,startY=0,moved=false; function touchStart(x,y){ startX=x; startY=y; moved=false; } function touchMove(x,y){ if(Math.abs(x-startX)>12) moved=true; } function touchEnd(x,y){ var dx=x-startX; var dy=y-startY; if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){ if(dx<0){ next(); } else { prev(); } } else { if(!moved) flip(); } }
 cardEl.addEventListener('touchstart',function(e){ var t=e.touches[0]; touchStart(t.clientX,t.clientY); },{passive:true});
