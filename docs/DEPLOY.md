@@ -1,15 +1,15 @@
 ## GitHub Pages — Single-File Deploy
 
-This project ships a zero-dependency viewer for GitHub Pages using `docs/index.html`.
+This project ships a zero-dependency viewer for GitHub Pages using `index.html` in the root.
 
 ### Configure Pages
 1. Open your repo Settings → Pages
 2. Source: Deploy from a branch
-3. Branch: `main` (or default), Folder: `/docs`
+3. Branch: `main` (or default), Folder: `/` (root)
 4. Save. Your site will be available at the Pages URL shown.
 
 ### Updating
-- Edit `docs/index.html` (and other docs), commit, push.
+- Edit `index.html` and `app.js` in the root, commit, push.
 - GitHub Pages will redeploy automatically.
 
 ### Notes

@@ -74,11 +74,11 @@ function generateAudio(card, index, total) {
   return new Promise((resolve, reject) => {
     const slug = slugify(card.front);
     const text = `${card.front}. ${card.back}`;
-    const outputPathDocs = path.join(__dirname, '../docs/audio', `${slug}.mp3`);
+    const outputPathRoot = path.join(__dirname, '../audio', `${slug}.mp3`);
     const outputPathPublic = path.join(__dirname, '../public/audio', `${slug}.mp3`);
 
     // Skip if already exists
-    if (fs.existsSync(outputPathDocs) && fs.existsSync(outputPathPublic)) {
+    if (fs.existsSync(outputPathRoot) && fs.existsSync(outputPathPublic)) {
       console.log(`⏭️  [${index + 1}/${total}] Skipping "${card.front}" (already exists)`);
       resolve();
       return;
@@ -114,14 +114,14 @@ function generateAudio(card, index, total) {
         return;
       }
 
-      const fileStreamDocs = fs.createWriteStream(outputPathDocs);
+      const fileStreamRoot = fs.createWriteStream(outputPathRoot);
       const fileStreamPublic = fs.createWriteStream(outputPathPublic);
 
-      res.pipe(fileStreamDocs);
+      res.pipe(fileStreamRoot);
       res.pipe(fileStreamPublic);
 
       res.on('end', () => {
-        const stats = fs.statSync(outputPathDocs);
+        const stats = fs.statSync(outputPathRoot);
         const sizeKB = (stats.size / 1024).toFixed(1);
         console.log(`✅ [${index + 1}/${total}] Generated "${card.front}" (${sizeKB} KB)`);
         resolve();
@@ -143,9 +143,9 @@ async function generateAll() {
   console.log('🚀 Starting audio generation...\n');
 
   // Ensure directories exist
-  const docsAudioDir = path.join(__dirname, '../docs/audio');
+  const rootAudioDir = path.join(__dirname, '../audio');
   const publicAudioDir = path.join(__dirname, '../public/audio');
-  if (!fs.existsSync(docsAudioDir)) fs.mkdirSync(docsAudioDir, { recursive: true });
+  if (!fs.existsSync(rootAudioDir)) fs.mkdirSync(rootAudioDir, { recursive: true });
   if (!fs.existsSync(publicAudioDir)) fs.mkdirSync(publicAudioDir, { recursive: true });
 
   // Generate with rate limiting (1 request per second to avoid hitting limits)
@@ -162,7 +162,7 @@ async function generateAll() {
     }
   }
 
-  console.log(`\n✨ Done! Generated audio files in docs/audio/ and public/audio/`);
+  console.log(`\n✨ Done! Generated audio files in audio/ (root) and public/audio/`);
   console.log(`   Total cards: ${allCards.length}`);
 }
 

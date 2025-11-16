@@ -8,7 +8,7 @@ FlashScotts uses a hybrid audio system:
 
 ## File Structure
 
-- **Single-file (GitHub Pages)**: `docs/audio/<slug>.mp3`
+- **Single-file (GitHub Pages)**: `audio/<slug>.mp3` (root directory)
 - **Next.js app**: `public/audio/<slug>.mp3`
 
 ## Filename Convention
@@ -43,7 +43,7 @@ pnpm generate-audio
 The script will:
 - Read all cards from `lib/data.ts`
 - Generate MP3s for each unique card
-- Save to both `docs/audio/` and `public/audio/`
+- Save to both `audio/` (root) and `public/audio/` (Next.js)
 - Skip files that already exist
 - Rate limit to 1 request/second (to avoid API limits)
 
@@ -75,7 +75,7 @@ ffmpeg -i input.mp3 -acodec libmp3lame -ab 64k -ac 1 -ar 22050 output.mp3
 
 ## Testing
 
-1. Place a test file: `docs/audio/old-adobe-mission.mp3`
+1. Place a test file: `audio/old-adobe-mission.mp3` (root directory)
 2. Visit the live site
 3. Enable Voice narration
 4. Navigate to "Old Adobe Mission" card
