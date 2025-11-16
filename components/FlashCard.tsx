@@ -36,46 +36,18 @@ export function FlashCard({ card, flipped, onFlip }: FlashCardProps) {
     const frontEl = frontRef.current;
     const backEl = backRef.current;
     
-    // Create temporary elements to measure content height
-    const tempDiv = document.createElement('div');
-    tempDiv.style.position = 'absolute';
-    tempDiv.style.visibility = 'hidden';
-    tempDiv.style.width = cardEl.offsetWidth + 'px';
-    tempDiv.style.padding = '20px 22px 24px';
-    document.body.appendChild(tempDiv);
-    
-    // Measure front content
-    const frontLabel = document.createElement('div');
-    frontLabel.className = 'uppercase tracking-[0.14em] text-lg text-muted';
-    frontLabel.textContent = label;
-    tempDiv.appendChild(frontLabel);
-    const frontTitle = document.createElement('h2');
-    frontTitle.className = 'text-4xl md:text-5xl font-bold m-0';
-    frontTitle.textContent = card.front;
-    tempDiv.appendChild(frontTitle);
-    const frontHeight = tempDiv.offsetHeight;
-    tempDiv.innerHTML = '';
-    
-    // Measure back content (title + body)
-    const backTitle = document.createElement('h2');
-    backTitle.className = 'text-4xl md:text-5xl font-bold m-0';
-    backTitle.textContent = card.front;
-    tempDiv.appendChild(backTitle);
-    const backBody = document.createElement('p');
-    backBody.className = 'text-2xl md:text-3xl leading-relaxed m-0 text-text/90';
-    backBody.textContent = card.back;
-    tempDiv.appendChild(backBody);
-    const backHeight = tempDiv.offsetHeight;
-    
-    document.body.removeChild(tempDiv);
-    
-    // Set card height to fit the taller content
+    // scrollHeight works even with backface-visibility hidden
+    const frontHeight = frontEl.scrollHeight;
+    const backHeight = backEl.scrollHeight;
     const maxHeight = Math.max(frontHeight, backHeight);
+    
+    // Set card height to fit the taller content (add buffer for padding)
     if (maxHeight > 0) {
-      cardEl.style.height = `${maxHeight + 60}px`;
-      cardEl.style.minHeight = `${maxHeight + 60}px`;
+      const cardHeight = maxHeight + 40;
+      cardEl.style.height = `${cardHeight}px`;
+      cardEl.style.minHeight = `${cardHeight}px`;
     }
-  }, [card, label]);
+  }, [card]);
 
   return (
     <article
