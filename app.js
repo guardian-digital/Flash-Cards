@@ -190,9 +190,17 @@ function populateDeckSelector(){
   
   deckSelect.value='all';
   console.log('Deck selector populated with', DECKS.length + 1, 'options:', DECKS.map(function(d){return d.label;}).join(', '));
+  console.log('Selector element:', deckSelect);
+  console.log('Selector options count:', deckSelect.options.length);
   
-  // Attach event listener
+  // Attach event listeners
   deckSelect.addEventListener('change', handleDeckChange);
+  deckSelect.addEventListener('click', function(e){
+    console.log('Selector clicked, current value:', e.target.value);
+  });
+  deckSelect.addEventListener('focus', function(){
+    console.log('Selector focused');
+  });
 }
 
 // Initialize when DOM is ready
