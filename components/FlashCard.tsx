@@ -44,13 +44,13 @@ export function FlashCard({ card, flipped, onFlip }: FlashCardProps) {
         flipped ? '[transform:rotateY(180deg)]' : '',
       ].join(' ')}
     >
-      <section className="absolute inset-0 p-4 md:p-5 backface-hidden flex flex-col gap-2 justify-center items-start">
-        <div className="uppercase tracking-[0.14em] text-sm text-muted">{label}</div>
-        <h2 className="text-3xl md:text-4xl font-bold m-0">{card.front}</h2>
+      <section className="absolute inset-0 p-5 md:p-6 backface-hidden flex flex-col gap-3 justify-center items-start">
+        <div className="uppercase tracking-[0.14em] text-lg text-muted">{label}</div>
+        <h2 className="text-4xl md:text-5xl font-bold m-0">{card.front}</h2>
       </section>
-      <section className="absolute inset-0 p-4 md:p-5 [transform:rotateY(180deg)] backface-hidden flex flex-col gap-3 justify-start">
-        <h2 className="text-3xl md:text-4xl font-bold m-0">{card.front}</h2>
-        <p className="text-xl leading-relaxed m-0 text-text/90">{card.back}</p>
+      <section className="absolute inset-0 p-5 md:p-6 [transform:rotateY(180deg)] backface-hidden flex flex-col gap-4 justify-start">
+        <h2 className="text-4xl md:text-5xl font-bold m-0">{card.front}</h2>
+        <p className="text-2xl md:text-3xl leading-relaxed m-0 text-text/90">{card.back}</p>
       </section>
     </article>
   );
