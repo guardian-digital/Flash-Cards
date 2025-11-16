@@ -411,6 +411,49 @@ function render(){
   pagerEl.textContent=(index+1)+' / '+cards.length;
   if(flipped){ cardEl.classList.add('flipped'); cardEl.setAttribute('aria-pressed','true'); }
   else { cardEl.classList.remove('flipped'); cardEl.setAttribute('aria-pressed','false'); }
+  
+  // Dynamically size card to fit all content without scrolling
+  setTimeout(function(){
+    var front=document.getElementById('front');
+    var back=document.getElementById('back');
+    if(front && back && cardEl){
+      // Create temporary elements to measure content height
+      var tempDiv=document.createElement('div');
+      tempDiv.style.position='absolute';
+      tempDiv.style.visibility='hidden';
+      tempDiv.style.width=cardEl.offsetWidth+'px';
+      tempDiv.style.padding='16px 18px 18px';
+      document.body.appendChild(tempDiv);
+      
+      // Measure front content
+      var frontTitle=document.createElement('h2');
+      frontTitle.className='title';
+      frontTitle.textContent=frontTitleEl.textContent;
+      tempDiv.appendChild(frontTitle);
+      var frontHeight=tempDiv.offsetHeight;
+      tempDiv.innerHTML='';
+      
+      // Measure back content (title + body)
+      var backTitle=document.createElement('h2');
+      backTitle.className='title';
+      backTitle.textContent=backTitleEl.textContent;
+      tempDiv.appendChild(backTitle);
+      var backBody=document.createElement('p');
+      backBody.className='body';
+      backBody.textContent=backTextEl.textContent;
+      tempDiv.appendChild(backBody);
+      var backHeight=tempDiv.offsetHeight;
+      
+      document.body.removeChild(tempDiv);
+      
+      // Set card height to fit the taller content
+      var maxHeight=Math.max(frontHeight,backHeight);
+      if(maxHeight>0){
+        cardEl.style.height=(maxHeight+60)+'px';
+        cardEl.style.minHeight=(maxHeight+60)+'px';
+      }
+    }
+  },50);
 }
 function flip(){ flipped=!flipped; render(); }
 function next(){
