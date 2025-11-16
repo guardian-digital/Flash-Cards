@@ -7,6 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "audit": "pnpm audit --audit-level=moderate",
+    "audit:fix": "pnpm audit --fix",
     "generate-audio": "node scripts/generate-audio.js"
   },
   "dependencies": {
