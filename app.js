@@ -242,6 +242,8 @@ function getBestVoice(){
 }
 
 var currentAudio=null;
+var audioEndCallback=null;
+var audioTimeout=null;
 
 function speakCurrent(){
   if(!narrationEnabled) return;
@@ -249,27 +251,83 @@ function speakCurrent(){
   var item = cards[index];
   if(!item) return;
   
-  // Stop any current audio/speech
+  // Stop any current audio/speech and clear timeout
   if(currentAudio){ currentAudio.pause(); currentAudio=null; }
   if(window.speechSynthesis){ window.speechSynthesis.cancel(); }
+  if(audioTimeout){ clearTimeout(audioTimeout); audioTimeout=null; }
+  
+  // Safety timeout: if audio doesn't finish within 45 seconds, advance anyway
+  if(audioEndCallback){
+    audioTimeout=setTimeout(function(){
+      if(audioEndCallback){
+        var cb=audioEndCallback;
+        audioEndCallback=null;
+        audioTimeout=null;
+        cb();
+      }
+    }, 45000);
+  }
   
   // Try pre-generated MP3 first
   var slug=slugify(item.front);
   var audio=new Audio('audio/'+slug+'.mp3');
   audio.onerror=function(){
     // Fallback to improved SpeechSynthesis
-    if(!window.speechSynthesis) return;
+    if(!window.speechSynthesis){
+      // No audio available - if we have a callback, trigger it after a short delay
+      if(audioEndCallback){
+        var cb=audioEndCallback;
+        audioEndCallback=null;
+        if(audioTimeout){ clearTimeout(audioTimeout); audioTimeout=null; }
+        setTimeout(cb, 2000);
+      }
+      return;
+    }
     try{
       var utter=new SpeechSynthesisUtterance(item.front+'. '+item.back);
       var voice=getBestVoice();
       if(voice) utter.voice=voice;
       utter.rate=0.92; utter.pitch=1.0; utter.lang='en-US';
+      
+      // Track when SpeechSynthesis finishes
+      utter.onend=function(){
+        currentAudio=null;
+        if(audioTimeout){ clearTimeout(audioTimeout); audioTimeout=null; }
+        if(audioEndCallback){
+          var cb=audioEndCallback;
+          audioEndCallback=null;
+          // Add 1.5 second gap after audio finishes
+          setTimeout(cb, 1500);
+        }
+      };
+      
       window.speechSynthesis.speak(utter);
-    }catch(e){}
+    }catch(e){
+      // If SpeechSynthesis also fails, trigger callback after delay
+      if(audioEndCallback){
+        var cb=audioEndCallback;
+        audioEndCallback=null;
+        if(audioTimeout){ clearTimeout(audioTimeout); audioTimeout=null; }
+        setTimeout(cb, 2000);
+      }
+    }
   };
-  audio.onended=function(){ currentAudio=null; };
+  audio.onended=function(){ 
+    currentAudio=null;
+    if(audioTimeout){ clearTimeout(audioTimeout); audioTimeout=null; }
+    // If auto is on and we have a callback, trigger it after a short delay
+    if(audioEndCallback){
+      var cb=audioEndCallback;
+      audioEndCallback=null;
+      // Add 1.5 second gap after audio finishes
+      setTimeout(cb, 1500);
+    }
+  };
   currentAudio=audio;
-  audio.play().catch(function(){ currentAudio=null; });
+  audio.play().catch(function(){ 
+    currentAudio=null;
+    // If play fails, audio.onerror will handle it
+  });
 }
 function toggleVoice(){
   // Stop any current audio/speech
@@ -279,9 +337,31 @@ function toggleVoice(){
   if(!window.speechSynthesis){
     narrationEnabled=false; voiceBtn.disabled=true; voiceBtn.textContent='Voice N/A'; return;
   }
+  var wasEnabled=narrationEnabled;
   narrationEnabled=!narrationEnabled;
-  if(!narrationEnabled){ voiceBtn.classList.remove('active'); voiceBtn.textContent='Voice Off'; }
-  else { voiceBtn.classList.add('active'); voiceBtn.textContent='Voice On'; speakCurrent(); }
+  if(!narrationEnabled){ 
+    voiceBtn.classList.remove('active'); 
+    voiceBtn.textContent='Voice Off';
+    // If auto is on and narration was enabled, switch from callback-based to interval-based
+    if(autoTimer && wasEnabled){
+      // Narration turned off while auto is on - switch to interval
+      clearInterval(autoTimer);
+      audioEndCallback=null;
+      autoTimer=setInterval(next, 8000);
+    }
+  }else { 
+    voiceBtn.classList.add('active'); 
+    voiceBtn.textContent='Voice On'; 
+    speakCurrent();
+    // If auto is on and narration was disabled, switch from interval-based to callback-based
+    if(autoTimer && !wasEnabled){
+      clearInterval(autoTimer);
+      audioEndCallback=advanceAfterNarration;
+    }else if(autoTimer && wasEnabled){
+      // Already set up correctly, just ensure callback is set
+      audioEndCallback=advanceAfterNarration;
+    }
+  }
 }
 function toggleShuffle(){
   shuffleMode=!shuffleMode;
@@ -291,12 +371,34 @@ function toggleShuffle(){
 }
 function stopAuto(){
   if(autoTimer){ clearInterval(autoTimer); autoTimer=null; }
+  audioEndCallback=null; // Clear any pending callback
+  if(audioTimeout){ clearTimeout(audioTimeout); audioTimeout=null; }
   autoBtn.classList.remove('active'); autoBtn.textContent='Auto: Off'; autoBtn.setAttribute('aria-pressed','false');
 }
+
+function advanceAfterNarration(){
+  // This will be called after audio finishes + delay
+  // next() will set up the callback for the next card automatically
+  next();
+}
+
 function toggleAuto(){
   if(autoTimer){ stopAuto(); return; }
   autoBtn.classList.add('active'); autoBtn.textContent='Auto: On'; autoBtn.setAttribute('aria-pressed','true');
-  autoTimer = setInterval(next, 8000);
+  
+  if(narrationEnabled){
+    // When narration is enabled, wait for audio to finish
+    // Set up callback that will be triggered when current audio ends
+    audioEndCallback=advanceAfterNarration;
+    // If audio is already playing, it will trigger the callback when done
+    // If no audio is playing, start it
+    if(!currentAudio){
+      speakCurrent();
+    }
+  }else{
+    // When narration is disabled, use fixed interval
+    autoTimer = setInterval(next, 8000);
+  }
 }
 
 deckLabel.textContent='All Highlights'; frontDeckLabel.textContent='All Highlights';
@@ -323,7 +425,14 @@ function next(){
   }else{
     index=(index+1)%cards.length;
   }
-  flipped=false; render(); if(narrationEnabled) speakCurrent();
+  flipped=false; render(); 
+  if(narrationEnabled){
+    // If auto is on, set up callback BEFORE starting audio (to avoid race condition)
+    if(autoTimer){
+      audioEndCallback=advanceAfterNarration;
+    }
+    speakCurrent();
+  }
 }
 function prev(){
   var cards=currentDeck.cards||[]; if(!cards.length) return;
