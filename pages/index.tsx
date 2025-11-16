@@ -52,36 +52,110 @@ export default function HomePage() {
     setFlipped(false);
   }, []);
 
-  // Voice synthesis
+  // Audio state
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Generate slug from card front text
+  const slugify = useCallback((text: string) => {
+    return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }, []);
+
+  // Get best available voice for SpeechSynthesis
+  const getBestVoice = useCallback(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices || !voices.length) return null;
+    // Prefer natural-sounding voices (Google, Microsoft, Amazon)
+    const preferred = voices.find((v) => /google|microsoft|amazon|samantha|alex/i.test(v.name));
+    if (preferred) return preferred;
+    // Fallback to first en-US voice
+    return voices.find((v) => /en-us/i.test(v.lang)) || voices[0];
+  }, []);
+
+  // Voice synthesis with hybrid MP3 + SpeechSynthesis
   const speakCurrent = useCallback(() => {
     if (!narrationEnabled) return;
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
     const card = currentDeck.cards[index];
     if (!card) return;
-    try {
-      window.speechSynthesis.cancel();
-      const text = `${card.front}. ${card.back}`;
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.rate = 0.95;
-      utter.pitch = 1.0;
-      utter.lang = 'en-US';
-      window.speechSynthesis.speak(utter);
-    } catch {
-      // swallow
+
+    // Stop any current audio/speech
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
     }
-  }, [index, narrationEnabled, currentDeck.cards]);
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+
+    // Try pre-generated MP3 first
+    const slug = slugify(card.front);
+    const audio = new Audio(`/audio/${slug}.mp3`);
+    audio.onerror = () => {
+      // Fallback to improved SpeechSynthesis
+      if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+      try {
+        const utter = new SpeechSynthesisUtterance(`${card.front}. ${card.back}`);
+        const voice = getBestVoice();
+        if (voice) utter.voice = voice;
+        utter.rate = 0.92;
+        utter.pitch = 1.0;
+        utter.lang = 'en-US';
+        window.speechSynthesis.speak(utter);
+      } catch {
+        // swallow
+      }
+    };
+    audio.onended = () => {
+      audioRef.current = null;
+    };
+    audioRef.current = audio;
+    audio.play().catch(() => {
+      audioRef.current = null;
+    });
+  }, [index, narrationEnabled, currentDeck.cards, slugify, getBestVoice]);
 
   const toggleVoice = useCallback(() => {
+    // Stop any current audio/speech
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
       setNarrationEnabled(false);
       return;
     }
     setNarrationEnabled((on) => {
       const nextOn = !on;
-      if (!nextOn) window.speechSynthesis.cancel();
       return nextOn;
     });
   }, []);
+
+  // Load voices when available (Chrome needs this)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.getVoices(); // Trigger load
+      const onVoicesChanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+      window.speechSynthesis.onvoiceschanged = onVoicesChanged;
+      return () => {
+        if (window.speechSynthesis) {
+          window.speechSynthesis.onvoiceschanged = null;
+        }
+      };
+    }
+  }, []);
+
+  // Auto-speak when narration enabled and index changes
+  useEffect(() => {
+    if (narrationEnabled) {
+      speakCurrent();
+    }
+  }, [index, narrationEnabled, speakCurrent]);
 
   const toggleShuffle = useCallback(() => {
     setShuffleEnabled((s) => !s);

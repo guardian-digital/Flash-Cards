@@ -171,24 +171,63 @@ function setDeckById(id){
   render();
 }
 
+// Generate slug from card front text
+function slugify(text){
+  return text.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+
+// Get best available voice for SpeechSynthesis
+function getBestVoice(){
+  if(!window.speechSynthesis) return null;
+  var voices=window.speechSynthesis.getVoices();
+  if(!voices||!voices.length) return null;
+  // Prefer natural-sounding voices (Google, Microsoft, Amazon)
+  var preferred=voices.find(function(v){ return /google|microsoft|amazon|samantha|alex/i.test(v.name); });
+  if(preferred) return preferred;
+  // Fallback to first en-US voice
+  return voices.find(function(v){ return /en-us/i.test(v.lang); }) || voices[0];
+}
+
+var currentAudio=null;
+
 function speakCurrent(){
   if(!narrationEnabled) return;
-  if(!window.speechSynthesis) return;
   var cards=currentDeck.cards; if(!cards||!cards.length) return;
-  try{
-    window.speechSynthesis.cancel();
-    var item = cards[index];
-    var utter=new SpeechSynthesisUtterance(item.front+'. '+item.back);
-    utter.rate=0.95; utter.pitch=1.0; utter.lang='en-US';
-    window.speechSynthesis.speak(utter);
-  }catch(e){}
+  var item = cards[index];
+  if(!item) return;
+  
+  // Stop any current audio/speech
+  if(currentAudio){ currentAudio.pause(); currentAudio=null; }
+  if(window.speechSynthesis){ window.speechSynthesis.cancel(); }
+  
+  // Try pre-generated MP3 first
+  var slug=slugify(item.front);
+  var audio=new Audio('audio/'+slug+'.mp3');
+  audio.onerror=function(){
+    // Fallback to improved SpeechSynthesis
+    if(!window.speechSynthesis) return;
+    try{
+      var utter=new SpeechSynthesisUtterance(item.front+'. '+item.back);
+      var voice=getBestVoice();
+      if(voice) utter.voice=voice;
+      utter.rate=0.92; utter.pitch=1.0; utter.lang='en-US';
+      window.speechSynthesis.speak(utter);
+    }catch(e){}
+  };
+  audio.onended=function(){ currentAudio=null; };
+  currentAudio=audio;
+  audio.play().catch(function(){ currentAudio=null; });
 }
 function toggleVoice(){
+  // Stop any current audio/speech
+  if(currentAudio){ currentAudio.pause(); currentAudio=null; }
+  if(window.speechSynthesis){ window.speechSynthesis.cancel(); }
+  
   if(!window.speechSynthesis){
     narrationEnabled=false; voiceBtn.disabled=true; voiceBtn.textContent='Voice N/A'; return;
   }
   narrationEnabled=!narrationEnabled;
-  if(!narrationEnabled){ window.speechSynthesis.cancel(); voiceBtn.classList.remove('active'); voiceBtn.textContent='Voice Off'; }
+  if(!narrationEnabled){ voiceBtn.classList.remove('active'); voiceBtn.textContent='Voice Off'; }
   else { voiceBtn.classList.add('active'); voiceBtn.textContent='Voice On'; speakCurrent(); }
 }
 function toggleShuffle(){
@@ -253,6 +292,13 @@ cardEl.addEventListener('touchmove',function(e){ var t=e.touches[0]; touchMove(t
 cardEl.addEventListener('touchend',function(e){ var t=e.changedTouches[0]; touchEnd(t.clientX,t.clientY); });
 var lastTap=0; document.addEventListener('touchend',function(e){ var now=Date.now(); if(now-lastTap<350){ e.preventDefault(); } lastTap=now; },{passive:false});
 document.addEventListener('visibilitychange', function(){ if(document.hidden){ stopAuto(); } });
+
+// Load voices when available (Chrome needs this)
+if(window.speechSynthesis){
+  window.speechSynthesis.getVoices(); // Trigger load
+  window.speechSynthesis.onvoiceschanged=function(){ window.speechSynthesis.getVoices(); };
+}
+
 setDeckById('all');
 
 
