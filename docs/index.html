@@ -50,7 +50,10 @@
         <span class="deck-name" id="deckLabel">All Highlights</span>
         <span class="pager" id="pager">1 / 1</span>
       </div>
-      <div class="tag-strip" id="tagStrip" aria-label="Tour highlight selector"></div>
+      <div class="tag-strip" aria-label="Deck selector">
+        <select id="deckSelect" aria-label="Choose deck" style="background:var(--card);color:var(--fg);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 12px;font-size:16px;">
+        </select>
+      </div>
     </header>
     <div class="card-wrap">
       <article class="card" id="card" role="button" aria-pressed="false" tabindex="0" aria-label="Flashcard. Tap to flip.">
@@ -67,6 +70,8 @@
     <div class="controls" aria-label="Card controls">
       <button id="prevBtn" class="secondary" aria-label="Previous card">◀ Prev</button>
       <button id="voiceBtn" class="secondary" aria-label="Toggle voice narration">Voice</button>
+      <button id="shuffleBtn" class="secondary" aria-label="Toggle shuffle" aria-pressed="false">Shuffle: Off</button>
+      <button id="autoBtn" class="secondary" aria-label="Start auto advance" aria-pressed="false">Auto: Off</button>
       <button id="flipBtn" aria-label="Flip card">Flip</button>
       <button id="nextBtn" class="secondary" aria-label="Next card">Next ▶</button>
     </div>
