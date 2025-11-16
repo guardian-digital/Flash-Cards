@@ -4,6 +4,10 @@ type ControlsProps = {
   onFlip: () => void;
   onToggleVoice: () => void;
   narrationEnabled: boolean;
+  onToggleShuffle?: () => void;
+  shuffleEnabled?: boolean;
+  onToggleAuto?: () => void;
+  autoEnabled?: boolean;
 };
 
 export function Controls({
@@ -12,6 +16,10 @@ export function Controls({
   onFlip,
   onToggleVoice,
   narrationEnabled,
+  onToggleShuffle,
+  shuffleEnabled = false,
+  onToggleAuto,
+  autoEnabled = false,
 }: ControlsProps) {
   return (
     <div className="flex gap-2 mt-2" aria-label="Card controls">
@@ -34,6 +42,34 @@ export function Controls({
       >
         {narrationEnabled ? 'Voice On' : 'Voice'}
       </button>
+      {onToggleShuffle && (
+        <button
+          type="button"
+          aria-label="Toggle shuffle"
+          aria-pressed={shuffleEnabled ? 'true' : 'false'}
+          className={[
+            'flex-1 min-h-[60px] rounded-full border border-white/20 text-base md:text-lg',
+            shuffleEnabled ? 'bg-accent text-black border-accent' : 'bg-transparent text-white',
+          ].join(' ')}
+          onClick={onToggleShuffle}
+        >
+          {shuffleEnabled ? 'Shuffle: On' : 'Shuffle: Off'}
+        </button>
+      )}
+      {onToggleAuto && (
+        <button
+          type="button"
+          aria-label="Toggle auto advance"
+          aria-pressed={autoEnabled ? 'true' : 'false'}
+          className={[
+            'flex-1 min-h-[60px] rounded-full border border-white/20 text-base md:text-lg',
+            autoEnabled ? 'bg-accent text-black border-accent' : 'bg-transparent text-white',
+          ].join(' ')}
+          onClick={onToggleAuto}
+        >
+          {autoEnabled ? 'Auto: On' : 'Auto: Off'}
+        </button>
+      )}
       <button
         type="button"
         aria-label="Flip card"

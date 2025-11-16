@@ -1,54 +1,62 @@
 import Head from 'next/head';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BRAND } from '@/config/brand';
-import { CARDS, GROUPS, type Card } from '@/lib/data';
+import { DECKS, getAllDeck, type Card, type Deck } from '@/lib/data';
 import { FlashCard } from '@/components/FlashCard';
-import { TagStrip } from '@/components/TagStrip';
+import { DeckSelect } from '@/components/DeckSelect';
 import { Controls } from '@/components/Controls';
 
 export default function HomePage() {
+  const [currentDeck, setCurrentDeck] = useState<Deck>(getAllDeck());
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [narrationEnabled, setNarrationEnabled] = useState(false);
+  const [shuffleEnabled, setShuffleEnabled] = useState(false);
+  const [autoEnabled, setAutoEnabled] = useState(false);
+  const autoTimerRef = useRef<NodeJS.Timeout | null>(null);
   const startRef = useRef<{ x: number; y: number } | null>(null);
   const movedRef = useRef(false);
 
-  const groupFirstIndex = useMemo(() => {
-    const map: Record<string, number> = {};
-    for (let i = 0; i < CARDS.length; i++) {
-      const g = CARDS[i].group;
-      if (g && map[g] === undefined) map[g] = i;
-    }
-    return map;
-  }, []);
-
-  const current: Card | null = CARDS.length ? CARDS[index] : null;
-  const activeGroup = current?.group ?? null;
+  const hasCards = currentDeck.cards.length > 0;
+  const current: Card | null = hasCards ? currentDeck.cards[index] : null;
 
   const flip = useCallback(() => setFlipped((f) => !f), []);
   const next = useCallback(() => {
-    if (!CARDS.length) return;
-    setIndex((i) => (i + 1) % CARDS.length);
+    if (!hasCards) return;
+    setIndex((i) => {
+      if (shuffleEnabled) {
+        if (currentDeck.cards.length === 1) return 0;
+        let n = i;
+        while (n === i) n = Math.floor(Math.random() * currentDeck.cards.length);
+        return n;
+      }
+      return (i + 1) % currentDeck.cards.length;
+    });
     setFlipped(false);
-  }, []);
+  }, [hasCards, shuffleEnabled, currentDeck.cards.length]);
   const prev = useCallback(() => {
-    if (!CARDS.length) return;
-    setIndex((i) => (i - 1 + CARDS.length) % CARDS.length);
+    if (!hasCards) return;
+    setIndex((i) => (i - 1 + currentDeck.cards.length) % currentDeck.cards.length);
+    setFlipped(false);
+  }, [hasCards, currentDeck.cards.length]);
+
+  const setDeckById = useCallback((id: string) => {
+    if (autoTimerRef.current) {
+      clearInterval(autoTimerRef.current);
+      autoTimerRef.current = null;
+      setAutoEnabled(false);
+    }
+    const found = id === 'all' ? getAllDeck() : DECKS.find((d) => d.id === id) || getAllDeck();
+    setCurrentDeck(found);
+    setIndex(0);
     setFlipped(false);
   }, []);
-  const goToGroup = useCallback((groupId: string) => {
-    const idx = groupFirstIndex[groupId];
-    if (typeof idx === 'number') {
-      setIndex(idx);
-      setFlipped(false);
-    }
-  }, [groupFirstIndex]);
 
   // Voice synthesis
   const speakCurrent = useCallback(() => {
     if (!narrationEnabled) return;
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    const card = CARDS[index];
+    const card = currentDeck.cards[index];
     if (!card) return;
     try {
       window.speechSynthesis.cancel();
@@ -61,7 +69,7 @@ export default function HomePage() {
     } catch {
       // swallow
     }
-  }, [index, narrationEnabled]);
+  }, [index, narrationEnabled, currentDeck.cards]);
 
   const toggleVoice = useCallback(() => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -74,6 +82,23 @@ export default function HomePage() {
       return nextOn;
     });
   }, []);
+
+  const toggleShuffle = useCallback(() => {
+    setShuffleEnabled((s) => !s);
+  }, []);
+
+  const toggleAuto = useCallback(() => {
+    if (autoTimerRef.current) {
+      clearInterval(autoTimerRef.current);
+      autoTimerRef.current = null;
+      setAutoEnabled(false);
+      return;
+    }
+    setAutoEnabled(true);
+    autoTimerRef.current = setInterval(() => {
+      next();
+    }, 8000);
+  }, [next]);
 
   useEffect(() => {
     speakCurrent();
@@ -112,12 +137,22 @@ export default function HomePage() {
     return () => document.removeEventListener('keydown', onKey);
   }, [next, prev]);
 
-  const deckLabel = useMemo(() => {
-    if (!current) return '0 / 0';
-    return current.group
-      ? `Highlights – ${current.group.charAt(0).toUpperCase()}${current.group.slice(1)}`
-      : 'All Highlights';
-  }, [current]);
+  useEffect(() => {
+    const onVis = () => {
+      if (document.hidden && autoTimerRef.current) {
+        clearInterval(autoTimerRef.current);
+        autoTimerRef.current = null;
+        setAutoEnabled(false);
+      }
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, []);
+
+  const deckOptions = useMemo(
+    () => [{ id: 'all', label: 'All Highlights' }, ...DECKS.map((d) => ({ id: d.id, label: d.label }))],
+    []
+  );
 
   return (
     <>
@@ -134,16 +169,12 @@ export default function HomePage() {
         <header className="flex flex-col gap-1 mb-1">
           <h1 className="text-2xl md:text-3xl font-bold m-0">Old Town Scottsdale Highlights</h1>
           <div className="flex gap-2 items-center justify-between text-base md:text-lg text-muted">
-            <span className="font-semibold" aria-live="polite">{deckLabel}</span>
+            <span className="font-semibold" aria-live="polite">{currentDeck.label}</span>
             <span className="text-muted" aria-live="polite">
-              {CARDS.length ? `${index + 1} / ${CARDS.length}` : '0 / 0'}
+              {hasCards ? `${index + 1} / ${currentDeck.cards.length}` : '0 / 0'}
             </span>
           </div>
-          <TagStrip
-            groups={GROUPS}
-            activeGroupId={activeGroup}
-            onSelect={goToGroup}
-          />
+          <DeckSelect options={deckOptions} value={currentDeck.id} onChange={setDeckById} />
         </header>
 
         <div className="flex-1 flex items-center justify-center">
@@ -176,6 +207,10 @@ export default function HomePage() {
           onFlip={flip}
           onToggleVoice={toggleVoice}
           narrationEnabled={narrationEnabled}
+          onToggleShuffle={toggleShuffle}
+          shuffleEnabled={shuffleEnabled}
+          onToggleAuto={toggleAuto}
+          autoEnabled={autoEnabled}
         />
         <div className="text-center text-muted text-sm mt-1">
           Tap card to flip • Swipe or use arrows to change cards
