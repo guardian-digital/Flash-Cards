@@ -109,10 +109,22 @@ var DECKS = [
 ];
 
 // All-decks computed
+function uniqueByFront(cards){
+  var seen = Object.create(null);
+  var out = [];
+  for (var i=0;i<cards.length;i++){
+    var f = cards[i].front || '';
+    if (!seen[f]){
+      seen[f] = true;
+      out.push(cards[i]);
+    }
+  }
+  return out;
+}
 var allDeck = {
   id: "all",
   label: "All Highlights",
-  cards: DECKS.reduce(function(acc, d){ return acc.concat(d.cards); }, [])
+  cards: uniqueByFront(DECKS.reduce(function(acc, d){ return acc.concat(d.cards); }, []))
 };
 
 // Elements

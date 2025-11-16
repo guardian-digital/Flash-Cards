@@ -111,11 +111,18 @@ export const DECKS: Deck[] = [
 ];
 
 export function getAllDeck(): Deck {
-  return {
-    id: 'all',
-    label: 'All Highlights',
-    cards: DECKS.flatMap((d) => d.cards),
-  };
+  const seen = new Set<string>();
+  const cards = [];
+  for (const d of DECKS) {
+    for (const c of d.cards) {
+      const key = c.front.trim();
+      if (!seen.has(key)) {
+        seen.add(key);
+        cards.push(c);
+      }
+    }
+  }
+  return { id: 'all', label: 'All Highlights', cards };
 }
 
 
