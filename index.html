@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Flash Cards - Mini Limo Driver</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+            touch-action: manipulation;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            width: 100%;
+            min-height: 300px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            font-size: 1.3rem;
+            line-height: 1.6;
+            user-select: none;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            width: 100%;
+            backface-visibility: hidden;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .tap-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: #999;
+            font-style: italic;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            color: #667eea;
+            touch-action: manipulation;
+        }
+
+        button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress {
+            text-align: center;
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .shuffle-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .card {
+                min-height: 250px;
+                padding: 30px;
+                font-size: 1.1rem;
+            }
+
+            button {
+                padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚗 Mini Limo Driver</h1>
+            <p class="subtitle">Flash Cards</p>
+        </header>
+
+        <div class="progress" id="progress">Card 1 of 10</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="card-container">
+            <div class="card" id="flashCard">
+                <div class="card-face card-front" id="cardFront">
+                    <div>Loading cards...</div>
+                </div>
+                <div class="card-face card-back" id="cardBack">
+                    <div>Answer</div>
+                </div>
+                <div class="tap-hint">Tap to flip</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="prevBtn" disabled>← Previous</button>
+            <button id="nextBtn">Next →</button>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="shuffle-btn" id="shuffleBtn">🔀 Shuffle Cards</button>
+        </div>
+    </div>
+
+    <script>
+        // Flash card data for mini limo driver
+        const flashCardsData = [
+            {
+                question: "What documents do you need to carry while driving a mini limo?",
+                answer: "Valid driver's license, vehicle registration, insurance certificate, and commercial driver permit (if required)"
+            },
+            {
+                question: "What is the maximum passenger capacity for a standard mini limo?",
+                answer: "Typically 8-10 passengers, depending on the vehicle model and local regulations"
+            },
+            {
+                question: "What should you check before starting your shift?",
+                answer: "Fuel level, tire pressure, lights, brakes, interior cleanliness, first aid kit, and emergency equipment"
+            },
+            {
+                question: "How should you handle intoxicated passengers?",
+                answer: "Remain calm and professional, ensure their safety, refuse service if they're disruptive, and contact authorities if necessary"
+            },
+            {
+                question: "What is the proper following distance in city traffic?",
+                answer: "Maintain at least 3-4 seconds following distance, more in adverse weather conditions"
+            },
+            {
+                question: "When should you refuse a ride request?",
+                answer: "If passengers are violent, excessively intoxicated, have illegal items, exceed capacity, or request unsafe/illegal actions"
+            },
+            {
+                question: "What information should you record for each trip?",
+                answer: "Pick-up/drop-off locations, times, passenger count, fare amount, and any incidents or issues"
+            },
+            {
+                question: "How do you handle a passenger emergency?",
+                answer: "Stop safely, call 911, provide first aid if trained, stay with passenger, and notify dispatch immediately"
+            },
+            {
+                question: "What are key defensive driving techniques?",
+                answer: "Anticipate other drivers' actions, maintain safe speeds, check mirrors frequently, avoid distractions, and plan escape routes"
+            },
+            {
+                question: "What should you do if involved in an accident?",
+                answer: "Ensure safety, call authorities, document scene with photos, exchange information, notify insurance, and file incident report"
+            }
+        ];
+
+        // App state
+        let currentCards = [...flashCardsData];
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        // DOM elements
+        const card = document.getElementById('flashCard');
+        const cardFront = document.getElementById('cardFront');
+        const cardBack = document.getElementById('cardBack');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        const progress = document.getElementById('progress');
+        const progressFill = document.getElementById('progressFill');
+
+        // Initialize
+        function init() {
+            displayCard();
+            updateProgress();
+            updateButtons();
+        }
+
+        // Display current card
+        function displayCard() {
+            const currentCard = currentCards[currentIndex];
+            cardFront.innerHTML = `<div>${currentCard.question}</div>`;
+            cardBack.innerHTML = `<div>${currentCard.answer}</div>`;
+            
+            // Reset flip state
+            if (isFlipped) {
+                card.classList.remove('flipped');
+                isFlipped = false;
+            }
+        }
+
+        // Flip card
+        function flipCard() {
+            card.classList.toggle('flipped');
+            isFlipped = !isFlipped;
+        }
+
+        // Navigate to next card
+        function nextCard() {
+            if (currentIndex < currentCards.length - 1) {
+                currentIndex++;
+                displayCard();
+                updateProgress();
+                updateButtons();
+            }
+        }
+
+        // Navigate to previous card
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                displayCard();
+                updateProgress();
+                updateButtons();
+            }
+        }
+
+        // Shuffle cards
+        function shuffleCards() {
+            // Fisher-Yates shuffle algorithm
+            for (let i = currentCards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
+            }
+            currentIndex = 0;
+            displayCard();
+            updateProgress();
+            updateButtons();
+        }
+
+        // Update progress display
+        function updateProgress() {
+            const total = currentCards.length;
+            const current = currentIndex + 1;
+            progress.textContent = `Card ${current} of ${total}`;
+            
+            const percentage = (current / total) * 100;
+            progressFill.style.width = `${percentage}%`;
+        }
+
+        // Update button states
+        function updateButtons() {
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === currentCards.length - 1;
+        }
+
+        // Event listeners
+        card.addEventListener('click', flipCard);
+        nextBtn.addEventListener('click', nextCard);
+        prevBtn.addEventListener('click', prevCard);
+        shuffleBtn.addEventListener('click', shuffleCards);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+
+        // Touch swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        card.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        card.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swipe left - next card
+                    nextCard();
+                } else {
+                    // Swipe right - previous card
+                    prevCard();
+                }
+            }
+        }
+
+        // Initialize app
+        init();
+    </script>
+</body>
+</html>
