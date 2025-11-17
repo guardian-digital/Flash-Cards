@@ -442,10 +442,6 @@ export function createFrontToIdMap(): Map<string, string> {
   }
   return map;
 }
-      back: "Dozens of holiday-lit trees turn this park into a glowing promenade during the holiday season. The tradition began in 1985 with just 12 trees and has grown to over 100 today.",
-    },
-    es: {
-      front: 'Paseo de Árboles del Centro Cívico',
       back: 'Decenas de árboles iluminados con luces navideñas convierten este parque en un paseo brillante durante la temporada navideña. La tradición comenzó en 1985 con solo 12 árboles y ha crecido a más de 100 hoy.',
     },
     fr: {
