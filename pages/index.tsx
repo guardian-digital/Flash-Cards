@@ -242,19 +242,28 @@ export default function HomePage() {
   // Touch gestures for swipe and tap
   const onTouchStart = useCallback((e: React.TouchEvent) => {
     const t = e.touches[0];
-    startRef.current = { x: t.clientX, y: t.clientY };
-    movedRef.current = false;
+    if (t) {
+      startRef.current = { x: t.clientX, y: t.clientY };
+      movedRef.current = false;
+    }
   }, []);
 
   const onTouchMove = useCallback((e: React.TouchEvent) => {
     const start = startRef.current;
     if (!start) return;
     const t = e.touches[0];
-    if (Math.abs(t.clientX - start.x) > 12) {
+    if (!t) return;
+    
+    const deltaX = Math.abs(t.clientX - start.x);
+    const deltaY = Math.abs(t.clientY - start.y);
+    
+    // If horizontal movement is significant, mark as moved and prevent default
+    if (deltaX > 10) {
       movedRef.current = true;
-      // Prevent scrolling when swiping horizontally
-      if (Math.abs(t.clientX - start.x) > Math.abs(t.clientY - start.y)) {
+      // Prevent scrolling when swiping horizontally (iOS needs this)
+      if (deltaX > deltaY) {
         e.preventDefault();
+        e.stopPropagation();
       }
     }
   }, []);
@@ -263,15 +272,31 @@ export default function HomePage() {
     const start = startRef.current;
     if (!start) return;
     const t = e.changedTouches[0];
+    if (!t) {
+      startRef.current = null;
+      return;
+    }
+    
     const dx = t.clientX - start.x;
     const dy = t.clientY - start.y;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-      if (dx < 0) next();
-      else prev();
-    } else {
-      if (!movedRef.current) flip();
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+    
+    // Swipe detection: horizontal movement must be greater than vertical and exceed threshold
+    if (absDx > absDy && absDx > 50) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (dx < 0) {
+        next();
+      } else {
+        prev();
+      }
+    } else if (!movedRef.current && absDx < 10 && absDy < 10) {
+      // Only flip if there was minimal movement (tap, not swipe)
+      flip();
     }
     startRef.current = null;
+    movedRef.current = false;
   }, [next, prev, flip]);
 
   // Keyboard shortcuts on document
@@ -336,21 +361,16 @@ export default function HomePage() {
 
           <div className="flex-1 flex items-center justify-center">
             {current ? (
-              <div
-                className="w-full touch-pan-y"
-                style={{ touchAction: 'pan-y pinch-zoom' }}
+              <FlashCard
+                card={current}
+                flipped={flipped}
+                onFlip={flip}
+                isFavorited={isFavorited(current)}
+                onToggleFavorite={toggleFavorite}
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
-              >
-                <FlashCard
-                  card={current}
-                  flipped={flipped}
-                  onFlip={flip}
-                  isFavorited={isFavorited(current)}
-                  onToggleFavorite={toggleFavorite}
-                />
-              </div>
+              />
             ) : (
               <div className="text-muted">No cards</div>
             )}

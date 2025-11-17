@@ -36,7 +36,7 @@
     @media (min-width:640px){ .meta-line{ gap:12px; } }
     .card-wrap{ flex:1; display:flex; align-items:flex-start; justify-content:center; min-height:0; padding-top:8px; }
     @media (min-width:640px){ .card-wrap{ padding-top:10px; } }
-    .card{ width:100%; min-height:50vh; background:var(--card); border-radius:16px; padding:16px; box-shadow:0 10px 32px rgba(0,0,0,.35); position:relative; transform-style:preserve-3d; transition:transform .45s ease; display:flex; align-items:stretch; justify-content:center; user-select:none; text-align:left; touch-action:pan-y pinch-zoom; -webkit-tap-highlight-color:transparent; }
+    .card{ width:100%; min-height:50vh; background:var(--card); border-radius:16px; padding:16px; box-shadow:0 10px 32px rgba(0,0,0,.35); position:relative; transform-style:preserve-3d; transition:transform .45s ease; display:flex; align-items:stretch; justify-content:center; user-select:none; text-align:left; touch-action:pan-x pan-y; -webkit-tap-highlight-color:transparent; }
     @media (min-width:640px){ .card{ min-height:46vh; border-radius:var(--radius); padding:20px; } }
     .card.flipped{ transform:rotateY(180deg); }
     .face{ position:absolute; inset:0; padding:16px; backface-visibility:hidden; display:flex; flex-direction:column; gap:8px; overflow:visible; }

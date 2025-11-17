@@ -442,10 +442,6 @@ export function createFrontToIdMap(): Map<string, string> {
   }
   return map;
 }
-      back: 'Decenas de árboles iluminados con luces navideñas convierten este parque en un paseo brillante durante la temporada navideña. La tradición comenzó en 1985 con solo 12 árboles y ha crecido a más de 100 hoy.',
-    },
-    fr: {
-      front: 'Promenade des Arbres du Centre Civique',
       back: 'Des dizaines d\'arbres illuminés pour les fêtes transforment ce parc en une promenade lumineuse pendant la saison des fêtes. La tradition a commencé en 1985 avec seulement 12 arbres et en compte plus de 100 aujourd\'hui.',
     },
     de: {

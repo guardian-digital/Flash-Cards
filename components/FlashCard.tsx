@@ -17,7 +17,16 @@ type FlashCardProps = {
   onToggleFavorite?: () => void;
 };
 
-export function FlashCard({ card, flipped, onFlip, isFavorited = false, onToggleFavorite }: FlashCardProps) {
+export function FlashCard({ 
+  card, 
+  flipped, 
+  onFlip, 
+  isFavorited = false, 
+  onToggleFavorite,
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
+}: FlashCardProps) {
   const cardRef = useRef<HTMLElement>(null);
   const frontRef = useRef<HTMLElement>(null);
   const backRef = useRef<HTMLElement>(null);
@@ -66,6 +75,9 @@ export function FlashCard({ card, flipped, onFlip, isFavorited = false, onToggle
       tabIndex={0}
       aria-label="Flashcard. Press to flip."
       onClick={onFlip}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
       onKeyDown={(e) => {
         if (e.key === ' ' || e.key === 'Enter') {
           e.preventDefault();
@@ -78,7 +90,7 @@ export function FlashCard({ card, flipped, onFlip, isFavorited = false, onToggle
           'flex items-stretch justify-center select-none text-left',
           flipped ? '[transform:rotateY(180deg)]' : '',
         ].join(' ')}
-        style={{ touchAction: 'pan-y pinch-zoom' }}
+        style={{ touchAction: 'pan-x pan-y' }}
     >
       {/* Favorite button - positioned absolutely, visible on both sides */}
       {onToggleFavorite && (
