@@ -72,12 +72,13 @@ export function FlashCard({ card, flipped, onFlip, isFavorited = false, onToggle
           onFlip();
         }
       }}
-      className={[
-        'w-full min-h-[50vh] sm:min-h-[46vh] bg-surface rounded-xl sm:rounded-lg p-4 sm:p-5 md:p-6 shadow-overlay',
-        'relative preserve-3d transition-transform duration-500 ease-out',
-        'flex items-stretch justify-center select-none text-left touch-manipulation',
-        flipped ? '[transform:rotateY(180deg)]' : '',
-      ].join(' ')}
+        className={[
+          'w-full min-h-[50vh] sm:min-h-[46vh] bg-surface rounded-xl sm:rounded-lg p-4 sm:p-5 md:p-6 shadow-overlay',
+          'relative preserve-3d transition-transform duration-500 ease-out',
+          'flex items-stretch justify-center select-none text-left',
+          flipped ? '[transform:rotateY(180deg)]' : '',
+        ].join(' ')}
+        style={{ touchAction: 'pan-y pinch-zoom' }}
     >
       {/* Favorite button - positioned absolutely, visible on both sides */}
       {onToggleFavorite && (

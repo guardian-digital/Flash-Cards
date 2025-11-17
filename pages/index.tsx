@@ -222,27 +222,39 @@ export default function HomePage() {
 
 
   // Touch gestures for swipe and tap
-  const onTouchStart = (x: number, y: number) => {
-    startRef.current = { x, y };
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    const t = e.touches[0];
+    startRef.current = { x: t.clientX, y: t.clientY };
     movedRef.current = false;
-  };
-  const onTouchMove = (x: number, _y: number) => {
+  }, []);
+
+  const onTouchMove = useCallback((e: React.TouchEvent) => {
     const start = startRef.current;
     if (!start) return;
-    if (Math.abs(x - start.x) > 12) movedRef.current = true;
-  };
-  const onTouchEnd = (x: number, y: number) => {
+    const t = e.touches[0];
+    if (Math.abs(t.clientX - start.x) > 12) {
+      movedRef.current = true;
+      // Prevent scrolling when swiping horizontally
+      if (Math.abs(t.clientX - start.x) > Math.abs(t.clientY - start.y)) {
+        e.preventDefault();
+      }
+    }
+  }, []);
+
+  const onTouchEnd = useCallback((e: React.TouchEvent) => {
     const start = startRef.current;
     if (!start) return;
-    const dx = x - start.x;
-    const dy = y - start.y;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
       if (dx < 0) next();
       else prev();
     } else {
       if (!movedRef.current) flip();
     }
-  };
+    startRef.current = null;
+  }, [next, prev, flip]);
 
   // Keyboard shortcuts on document
   useEffect(() => {
@@ -296,35 +308,27 @@ export default function HomePage() {
           </div>
         </header>
 
-        <div className="flex-1 flex items-center justify-center">
-          {current ? (
-            <div
-              className="w-full"
-              onTouchStart={(e) => {
-                const t = e.touches[0];
-                onTouchStart(t.clientX, t.clientY);
-              }}
-              onTouchMove={(e) => {
-                const t = e.touches[0];
-                onTouchMove(t.clientX, t.clientY);
-              }}
-              onTouchEnd={(e) => {
-                const t = e.changedTouches[0];
-                onTouchEnd(t.clientX, t.clientY);
-              }}
-            >
-              <FlashCard
-                card={current}
-                flipped={flipped}
-                onFlip={flip}
-                isFavorited={isFavorited(current)}
-                onToggleFavorite={toggleFavorite}
-              />
-            </div>
-          ) : (
-            <div className="text-muted">No cards</div>
-          )}
-        </div>
+          <div className="flex-1 flex items-center justify-center">
+            {current ? (
+              <div
+                className="w-full touch-pan-y"
+                style={{ touchAction: 'pan-y pinch-zoom' }}
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
+              >
+                <FlashCard
+                  card={current}
+                  flipped={flipped}
+                  onFlip={flip}
+                  isFavorited={isFavorited(current)}
+                  onToggleFavorite={toggleFavorite}
+                />
+              </div>
+            ) : (
+              <div className="text-muted">No cards</div>
+            )}
+          </div>
 
         <Controls
           onPrev={prev}

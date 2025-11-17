@@ -595,8 +595,17 @@ hzFlip.addEventListener('click',flip); hzNext.addEventListener('click',next); hz
 cardEl.addEventListener('keydown',function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); flip(); } if(e.key==='ArrowRight'){ next(); } if(e.key==='ArrowLeft'){ prev(); } });
 var startX=0,startY=0,moved=false; function touchStart(x,y){ startX=x; startY=y; moved=false; } function touchMove(x,y){ if(Math.abs(x-startX)>12) moved=true; } function touchEnd(x,y){ var dx=x-startX; var dy=y-startY; if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){ if(dx<0){ next(); } else { prev(); } } else { if(!moved) flip(); } }
 cardEl.addEventListener('touchstart',function(e){ var t=e.touches[0]; touchStart(t.clientX,t.clientY); },{passive:true});
-cardEl.addEventListener('touchmove',function(e){ var t=e.touches[0]; touchMove(t.clientX,t.clientY); },{passive:true});
-cardEl.addEventListener('touchend',function(e){ var t=e.changedTouches[0]; touchEnd(t.clientX,t.clientY); });
+cardEl.addEventListener('touchmove',function(e){ 
+  var t=e.touches[0]; 
+  var startX=startX||0;
+  var startY=startY||0;
+  // Prevent scrolling when swiping horizontally
+  if(Math.abs(t.clientX-startX)>Math.abs(t.clientY-startY)&&Math.abs(t.clientX-startX)>12){
+    e.preventDefault();
+  }
+  touchMove(t.clientX,t.clientY); 
+},{passive:false});
+cardEl.addEventListener('touchend',function(e){ var t=e.changedTouches[0]; touchEnd(t.clientX,t.clientY); },{passive:true});
 var lastTap=0; document.addEventListener('touchend',function(e){ var now=Date.now(); if(now-lastTap<350){ e.preventDefault(); } lastTap=now; },{passive:false});
 
 // Load voices when available (Chrome needs this)
