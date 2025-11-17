@@ -20,10 +20,12 @@ import { getLanguagePreference, setLanguagePreference, t, type Language } from '
 import { fuzzySearch } from '@/lib/search';
 import { SearchInput } from '@/components/SearchInput';
 import { trackDeckSelection, trackCardView, trackNarrationToggle, trackSearch, trackFavoriteToggle } from '@/lib/analytics';
+import { parseShareUrl, generateShareUrl } from '@/lib/share';
 
 // Lazy load modals for code splitting
 const ReviewPrompt = lazy(() => import('@/components/ReviewPrompt').then((mod) => ({ default: mod.ReviewPrompt })));
 const InstallPrompt = lazy(() => import('@/components/InstallPrompt').then((mod) => ({ default: mod.InstallPrompt })));
+const ShareModal = lazy(() => import('@/components/ShareModal').then((mod) => ({ default: mod.ShareModal })));
 
 export default function HomePage() {
   const [baseDeck, setBaseDeck] = useState<Deck>(getAllDeck());
@@ -32,6 +34,7 @@ export default function HomePage() {
   const [narrationEnabled, setNarrationEnabled] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [showReviewPrompt, setShowReviewPrompt] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [language, setLanguage] = useState<Language>(getLanguagePreference());
   const [searchQuery, setSearchQuery] = useState('');
   const startRef = useRef<{ x: number; y: number } | null>(null);
@@ -87,17 +90,45 @@ export default function HomePage() {
 
   const setDeckById = useCallback((id: string) => {
     setSearchQuery(''); // Clear search when changing decks
-      if (id === 'favorites') {
-        const allCards = getAllDeck().cards;
-        const favoritedCards = getFavoritedCards(allCards);
-        setBaseDeck({ id: 'favorites', label: t('deck.favorites', language), cards: favoritedCards });
-      } else {
-        const found = id === 'all' ? getAllDeck() : DECKS.find((d) => d.id === id) || getAllDeck();
-        setBaseDeck(found);
+    trackDeckSelection(id);
+    if (id === 'favorites') {
+      const allCards = getAllDeck().cards;
+      const favoritedCards = getFavoritedCards(allCards);
+      setBaseDeck({ id: 'favorites', label: t('deck.favorites', language), cards: favoritedCards });
+    } else {
+      const found = id === 'all' ? getAllDeck() : DECKS.find((d) => d.id === id) || getAllDeck();
+      setBaseDeck(found);
+    }
+    setIndex(0);
+    setFlipped(false);
+  }, [language]);
+
+  // Handle deep linking from share URLs (must be after setDeckById is defined)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const shareParams = parseShareUrl();
+    if (shareParams.deckId && shareParams.cardIndex !== null) {
+      // Set language if provided
+      if (shareParams.language && ['en', 'es', 'fr', 'de'].includes(shareParams.language)) {
+        setLanguage(shareParams.language as Language);
       }
-      setIndex(0);
-      setFlipped(false);
-    }, [language]);
+      
+      // Set deck and navigate to card
+      setDeckById(shareParams.deckId);
+      // Wait for deck to load, then set index
+      setTimeout(() => {
+        if (shareParams.cardIndex !== null) {
+          setIndex(shareParams.cardIndex);
+        }
+      }, 100);
+      
+      // Clean up URL (remove query params)
+      const url = new URL(window.location.href);
+      url.search = '';
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [setDeckById]); // Only run on mount, but include setDeckById in deps
 
   // Load favorites on mount and when they change
   useEffect(() => {
@@ -433,6 +464,7 @@ export default function HomePage() {
           onNext={next}
           onFlip={flip}
           onToggleVoice={toggleVoice}
+          onShare={() => setShowShareModal(true)}
           narrationEnabled={narrationEnabled}
           language={language}
         />
@@ -454,6 +486,17 @@ export default function HomePage() {
             {showReviewPrompt && (
               <Suspense fallback={null}>
                 <ReviewPrompt onClose={() => setShowReviewPrompt(false)} language={language} />
+              </Suspense>
+            )}
+            {showShareModal && current && (
+              <Suspense fallback={null}>
+                <ShareModal
+                  deckId={currentDeck.id}
+                  cardIndex={index}
+                  cardFront={current.front}
+                  onClose={() => setShowShareModal(false)}
+                  language={language}
+                />
               </Suspense>
             )}
             <Suspense fallback={null}>
