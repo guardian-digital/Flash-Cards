@@ -343,11 +343,12 @@ export default function HomePage() {
             >
               Leave a Review
             </button>
-          </footer>
-          {showReviewPrompt && <ReviewPrompt onClose={() => setShowReviewPrompt(false)} />}
-        </div>
-      </>
-    );
-  }
+            </footer>
+            {showReviewPrompt && <ReviewPrompt onClose={() => setShowReviewPrompt(false)} />}
+            <InstallPrompt />
+          </div>
+        </>
+      );
+    }
 
 
