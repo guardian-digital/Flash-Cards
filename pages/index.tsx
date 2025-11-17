@@ -10,6 +10,7 @@ import Head from 'next/head';
 import { useCallback, useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react';
 import { BRAND } from '@/config/brand';
 import { DECKS, getAllDeck, type Card, type Deck } from '@/lib/data';
+import { getTranslatedDeck, getTranslatedCard } from '@/lib/data-i18n';
 import { FlashCard } from '@/components/FlashCard';
 import { DeckSelect } from '@/components/DeckSelect';
 import { LanguageSelect } from '@/components/LanguageSelect';
@@ -22,7 +23,7 @@ const ReviewPrompt = lazy(() => import('@/components/ReviewPrompt').then((mod) =
 const InstallPrompt = lazy(() => import('@/components/InstallPrompt').then((mod) => ({ default: mod.InstallPrompt })));
 
 export default function HomePage() {
-  const [currentDeck, setCurrentDeck] = useState<Deck>(getAllDeck());
+  const [baseDeck, setBaseDeck] = useState<Deck>(getAllDeck());
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [narrationEnabled, setNarrationEnabled] = useState(false);
@@ -32,6 +33,8 @@ export default function HomePage() {
   const startRef = useRef<{ x: number; y: number } | null>(null);
   const movedRef = useRef(false);
 
+  // Get translated deck based on current language
+  const currentDeck = useMemo(() => getTranslatedDeck(baseDeck, language), [baseDeck, language]);
   const hasCards = currentDeck.cards.length > 0;
   const current: Card | null = hasCards ? currentDeck.cards[index] : null;
 
@@ -52,10 +55,10 @@ export default function HomePage() {
       if (id === 'favorites') {
         const allCards = getAllDeck().cards;
         const favoritedCards = getFavoritedCards(allCards);
-        setCurrentDeck({ id: 'favorites', label: t('deck.favorites', language), cards: favoritedCards });
+        setBaseDeck({ id: 'favorites', label: t('deck.favorites', language), cards: favoritedCards });
       } else {
         const found = id === 'all' ? getAllDeck() : DECKS.find((d) => d.id === id) || getAllDeck();
-        setCurrentDeck(found);
+        setBaseDeck(found);
       }
       setIndex(0);
       setFlipped(false);
@@ -100,14 +103,14 @@ export default function HomePage() {
     }
     setFavorites(newFavorites);
     
-    // If we're on favorites deck and unfavorited, remove from current deck
-    if (currentDeck.id === 'favorites' && !newFavorited) {
-      const updatedCards = currentDeck.cards.filter(c => c.front !== key);
-      setCurrentDeck({ ...currentDeck, cards: updatedCards });
-      if (index >= updatedCards.length) {
-        setIndex(Math.max(0, updatedCards.length - 1));
+      // If we're on favorites deck and unfavorited, remove from base deck
+      if (baseDeck.id === 'favorites' && !newFavorited) {
+        const updatedCards = baseDeck.cards.filter(c => c.front !== key);
+        setBaseDeck({ ...baseDeck, cards: updatedCards });
+        if (index >= updatedCards.length) {
+          setIndex(Math.max(0, updatedCards.length - 1));
+        }
       }
-    }
   }, [current, favorites, currentDeck, index]);
 
   // Audio state
@@ -146,7 +149,10 @@ export default function HomePage() {
     }
 
     // Try pre-generated MP3 first (lazy loaded on demand)
-    const slug = slugify(card.front);
+    // Use English slug for audio (audio files are in English)
+    // Get base English card for audio file lookup
+    const baseCard = getTranslatedCard(card, 'en');
+    const slug = slugify(baseCard.front);
     const audio = new Audio(`/audio/${slug}.mp3`);
     // Audio is loaded on-demand, not preloaded to save bandwidth
     audio.preload = 'none';
@@ -156,12 +162,21 @@ export default function HomePage() {
         return;
       }
       try {
-        const utter = new SpeechSynthesisUtterance(`${card.front}. ${card.back}`);
+        // Use translated card for speech synthesis
+        const cardToSpeak = getTranslatedCard(card, language);
+        const utter = new SpeechSynthesisUtterance(`${cardToSpeak.front}. ${cardToSpeak.back}`);
         const voice = getBestVoice();
         if (voice) utter.voice = voice;
         utter.rate = 0.92;
         utter.pitch = 1.0;
-        utter.lang = 'en-US';
+        // Set language based on current language selection
+        const langMap: Record<Language, string> = {
+          en: 'en-US',
+          es: 'es-ES',
+          fr: 'fr-FR',
+          de: 'de-DE',
+        };
+        utter.lang = langMap[language] || 'en-US';
         
         // Track when SpeechSynthesis finishes
         utter.onend = () => {
@@ -181,7 +196,7 @@ export default function HomePage() {
       audioRef.current = null;
       // If play fails, audio.onerror will handle it
     });
-  }, [index, narrationEnabled, currentDeck.cards, slugify, getBestVoice]);
+  }, [index, narrationEnabled, currentDeck.cards, language, slugify, getBestVoice]);
 
   const toggleVoice = useCallback(() => {
     // Stop any current audio/speech
