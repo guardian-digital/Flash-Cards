@@ -442,9 +442,6 @@ export function createFrontToIdMap(): Map<string, string> {
   }
   return map;
 }
-  translations: {
-    en: {
-      front: 'Civic Center Tree Walk',
       back: "Dozens of holiday-lit trees turn this park into a glowing promenade during the holiday season. The tradition began in 1985 with just 12 trees and has grown to over 100 today.",
     },
     es: {
