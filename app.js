@@ -597,8 +597,6 @@ var startX=0,startY=0,moved=false; function touchStart(x,y){ startX=x; startY=y;
 cardEl.addEventListener('touchstart',function(e){ var t=e.touches[0]; touchStart(t.clientX,t.clientY); },{passive:true});
 cardEl.addEventListener('touchmove',function(e){ 
   var t=e.touches[0]; 
-  var startX=startX||0;
-  var startY=startY||0;
   // Prevent scrolling when swiping horizontally
   if(Math.abs(t.clientX-startX)>Math.abs(t.clientY-startY)&&Math.abs(t.clientX-startX)>12){
     e.preventDefault();
