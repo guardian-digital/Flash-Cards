@@ -114,9 +114,15 @@ export function FlashCard({ card, flipped, onFlip, isFavorited = false, onToggle
         </button>
       )}
       <section ref={frontRef} className="absolute inset-0 p-4 sm:p-5 md:p-6 backface-hidden flex flex-col gap-2 sm:gap-3 justify-center items-center overflow-visible">
-        <div className="flex justify-center mb-2 sm:mb-3">
-          <img src="/logo.svg" alt="Scottsdale Cart Tours" className="h-10 sm:h-12 md:h-14" />
-        </div>
+          <div className="flex justify-center mb-2 sm:mb-3">
+            <img 
+              src="/logo.svg" 
+              alt="Scottsdale Cart Tours" 
+              className="h-10 sm:h-12 md:h-14"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
         <div className="uppercase tracking-[0.14em] text-sm sm:text-base md:text-lg text-muted">{label}</div>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold m-0 leading-tight text-center">{card.front}</h2>
       </section>

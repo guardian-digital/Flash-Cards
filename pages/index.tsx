@@ -7,15 +7,17 @@
  */
 
 import Head from 'next/head';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react';
 import { BRAND } from '@/config/brand';
 import { DECKS, getAllDeck, type Card, type Deck } from '@/lib/data';
 import { FlashCard } from '@/components/FlashCard';
 import { DeckSelect } from '@/components/DeckSelect';
 import { Controls } from '@/components/Controls';
-import { ReviewPrompt } from '@/components/ReviewPrompt';
-import { InstallPrompt } from '@/components/InstallPrompt';
 import { getFavoritedCards, isFavorited, toggleFavorite as toggleFavoriteUtil } from '@/lib/favorites';
+
+// Lazy load modals for code splitting
+const ReviewPrompt = lazy(() => import('@/components/ReviewPrompt').then((mod) => ({ default: mod.ReviewPrompt })));
+const InstallPrompt = lazy(() => import('@/components/InstallPrompt').then((mod) => ({ default: mod.InstallPrompt })));
 
 export default function HomePage() {
   const [currentDeck, setCurrentDeck] = useState<Deck>(getAllDeck());
@@ -140,9 +142,11 @@ export default function HomePage() {
       window.speechSynthesis.cancel();
     }
 
-    // Try pre-generated MP3 first
+    // Try pre-generated MP3 first (lazy loaded on demand)
     const slug = slugify(card.front);
     const audio = new Audio(`/audio/${slug}.mp3`);
+    // Audio is loaded on-demand, not preloaded to save bandwidth
+    audio.preload = 'none';
     audio.onerror = () => {
       // Fallback to improved SpeechSynthesis
       if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -344,8 +348,14 @@ export default function HomePage() {
               Leave a Review
             </button>
             </footer>
-            {showReviewPrompt && <ReviewPrompt onClose={() => setShowReviewPrompt(false)} />}
-            <InstallPrompt />
+            {showReviewPrompt && (
+              <Suspense fallback={null}>
+                <ReviewPrompt onClose={() => setShowReviewPrompt(false)} />
+              </Suspense>
+            )}
+            <Suspense fallback={null}>
+              <InstallPrompt />
+            </Suspense>
           </div>
         </>
       );
