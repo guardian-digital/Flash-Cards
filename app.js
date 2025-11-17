@@ -295,8 +295,6 @@ var prevBtn=document.getElementById('prevBtn');
 var nextBtn=document.getElementById('nextBtn');
 var flipBtn=document.getElementById('flipBtn');
 var voiceBtn=document.getElementById('voiceBtn');
-var shuffleBtn=document.getElementById('shuffleBtn');
-var autoBtn=document.getElementById('autoBtn');
 var hzPrev=document.getElementById('hzPrev');
 var hzNext=document.getElementById('hzNext');
 var hzFlip=document.getElementById('hzFlip');
@@ -305,14 +303,11 @@ var hzFlip=document.getElementById('hzFlip');
 var currentDeck=allDeck;
 var index=0; var flipped=false;
 var narrationEnabled=false;
-var shuffleMode=false;
-var autoTimer=null;
 
 // Deck selector change handler
 function handleDeckChange(e){ 
   var selectedId = e.target.value;
   console.log('Deck selected:', selectedId);
-  stopAuto(); 
   setDeckById(selectedId); 
 }
 
@@ -396,8 +391,6 @@ function getBestVoice(){
 }
 
 var currentAudio=null;
-var audioEndCallback=null;
-var audioTimeout=null;
 
 function speakCurrent(){
   if(!narrationEnabled) return;
@@ -405,22 +398,9 @@ function speakCurrent(){
   var item = cards[index];
   if(!item) return;
   
-  // Stop any current audio/speech and clear timeout
+  // Stop any current audio/speech
   if(currentAudio){ currentAudio.pause(); currentAudio=null; }
   if(window.speechSynthesis){ window.speechSynthesis.cancel(); }
-  if(audioTimeout){ clearTimeout(audioTimeout); audioTimeout=null; }
-  
-  // Safety timeout: if audio doesn't finish within 45 seconds, advance anyway
-  if(audioEndCallback){
-    audioTimeout=setTimeout(function(){
-      if(audioEndCallback){
-        var cb=audioEndCallback;
-        audioEndCallback=null;
-        audioTimeout=null;
-        cb();
-      }
-    }, 45000);
-  }
   
   // Try pre-generated MP3 first
   var slug=slugify(item.front);
@@ -428,13 +408,6 @@ function speakCurrent(){
   audio.onerror=function(){
     // Fallback to improved SpeechSynthesis
     if(!window.speechSynthesis){
-      // No audio available - if we have a callback, trigger it after a short delay
-      if(audioEndCallback){
-        var cb=audioEndCallback;
-        audioEndCallback=null;
-        if(audioTimeout){ clearTimeout(audioTimeout); audioTimeout=null; }
-        setTimeout(cb, 2000);
-      }
       return;
     }
     try{
@@ -446,36 +419,15 @@ function speakCurrent(){
       // Track when SpeechSynthesis finishes
       utter.onend=function(){
         currentAudio=null;
-        if(audioTimeout){ clearTimeout(audioTimeout); audioTimeout=null; }
-        if(audioEndCallback){
-          var cb=audioEndCallback;
-          audioEndCallback=null;
-          // Add 1.5 second gap after audio finishes
-          setTimeout(cb, 1500);
-        }
       };
       
       window.speechSynthesis.speak(utter);
     }catch(e){
-      // If SpeechSynthesis also fails, trigger callback after delay
-      if(audioEndCallback){
-        var cb=audioEndCallback;
-        audioEndCallback=null;
-        if(audioTimeout){ clearTimeout(audioTimeout); audioTimeout=null; }
-        setTimeout(cb, 2000);
-      }
+      // SpeechSynthesis failed
     }
   };
   audio.onended=function(){ 
     currentAudio=null;
-    if(audioTimeout){ clearTimeout(audioTimeout); audioTimeout=null; }
-    // If auto is on and we have a callback, trigger it after a short delay
-    if(audioEndCallback){
-      var cb=audioEndCallback;
-      audioEndCallback=null;
-      // Add 1.5 second gap after audio finishes
-      setTimeout(cb, 1500);
-    }
   };
   currentAudio=audio;
   audio.play().catch(function(){ 
@@ -491,89 +443,14 @@ function toggleVoice(){
   if(!window.speechSynthesis){
     narrationEnabled=false; voiceBtn.disabled=true; voiceBtn.textContent='Voice N/A'; return;
   }
-  var wasEnabled=narrationEnabled;
   narrationEnabled=!narrationEnabled;
   if(!narrationEnabled){ 
     voiceBtn.classList.remove('active'); 
     voiceBtn.textContent='Voice Off';
-    // If auto is on and narration was enabled, switch from callback-based to interval-based
-    if(autoTimer && wasEnabled){
-      // Narration turned off while auto is on - switch to interval
-      clearInterval(autoTimer);
-      audioEndCallback=null;
-      autoTimer=setInterval(next, 8000);
-    }
   }else { 
     voiceBtn.classList.add('active'); 
     voiceBtn.textContent='Voice On'; 
     speakCurrent();
-    // If auto is on and narration was disabled, switch from interval-based to callback-based
-    if(autoTimer && !wasEnabled){
-      clearInterval(autoTimer);
-      audioEndCallback=advanceAfterNarration;
-    }else if(autoTimer && wasEnabled){
-      // Already set up correctly, just ensure callback is set
-      audioEndCallback=advanceAfterNarration;
-    }
-  }
-}
-function toggleShuffle(){
-  shuffleMode=!shuffleMode;
-  shuffleBtn.classList.toggle('active', shuffleMode);
-  var shuffleMobile = shuffleMode ? 'Shuffle ✓' : 'Shuffle';
-  var shuffleDesktop = shuffleMode ? 'Shuffle: On' : 'Shuffle: Off';
-  var mobileSpan = shuffleBtn.querySelector('.mobile-text');
-  var desktopSpan = shuffleBtn.querySelector('.desktop-text');
-  if (mobileSpan) mobileSpan.textContent = shuffleMobile;
-  if (desktopSpan) desktopSpan.textContent = shuffleDesktop;
-  if (!mobileSpan && !desktopSpan) shuffleBtn.textContent = shuffleDesktop; // Fallback
-  shuffleBtn.setAttribute('aria-pressed', shuffleMode ? 'true' : 'false');
-}
-function stopAuto(){
-  if(autoTimer){ clearInterval(autoTimer); autoTimer=null; }
-  audioEndCallback=null; // Clear any pending callback
-  if(audioTimeout){ clearTimeout(audioTimeout); audioTimeout=null; }
-  autoBtn.classList.remove('active');
-  var autoMobile = 'Auto';
-  var autoDesktop = 'Auto: Off';
-  var autoMobileSpan = autoBtn.querySelector('.mobile-text');
-  var autoDesktopSpan = autoBtn.querySelector('.desktop-text');
-  if (autoMobileSpan) autoMobileSpan.textContent = autoMobile;
-  if (autoDesktopSpan) autoDesktopSpan.textContent = autoDesktop;
-  if (!autoMobileSpan && !autoDesktopSpan) autoBtn.textContent = autoDesktop; // Fallback
-  autoBtn.setAttribute('aria-pressed','false');
-}
-
-function advanceAfterNarration(){
-  // This will be called after audio finishes + delay
-  // next() will set up the callback for the next card automatically
-  next();
-}
-
-function toggleAuto(){
-  if(autoTimer){ stopAuto(); return; }
-  autoBtn.classList.add('active');
-  var autoMobileOn = 'Auto ✓';
-  var autoDesktopOn = 'Auto: On';
-  var autoMobileSpanOn = autoBtn.querySelector('.mobile-text');
-  var autoDesktopSpanOn = autoBtn.querySelector('.desktop-text');
-  if (autoMobileSpanOn) autoMobileSpanOn.textContent = autoMobileOn;
-  if (autoDesktopSpanOn) autoDesktopSpanOn.textContent = autoDesktopOn;
-  if (!autoMobileSpanOn && !autoDesktopSpanOn) autoBtn.textContent = autoDesktopOn; // Fallback
-  autoBtn.setAttribute('aria-pressed','true');
-  
-  if(narrationEnabled){
-    // When narration is enabled, wait for audio to finish
-    // Set up callback that will be triggered when current audio ends
-    audioEndCallback=advanceAfterNarration;
-    // If audio is already playing, it will trigger the callback when done
-    // If no audio is playing, start it
-    if(!currentAudio){
-      speakCurrent();
-    }
-  }else{
-    // When narration is disabled, use fixed interval
-    autoTimer = setInterval(next, 8000);
   }
 }
 
@@ -610,24 +487,9 @@ function render(){
 function flip(){ flipped=!flipped; render(); }
 function next(){
   var cards=currentDeck.cards||[]; if(!cards.length) return;
-  if(shuffleMode){
-    if(cards.length===1){ index=0; }
-    else {
-      var ni=index;
-      while(ni===index){ ni=Math.floor(Math.random()*cards.length); }
-      index=ni;
-    }
-  }else{
-    index=(index+1)%cards.length;
-  }
+  index=(index+1)%cards.length;
   flipped=false; render(); 
-  if(narrationEnabled){
-    // If auto is on, set up callback BEFORE starting audio (to avoid race condition)
-    if(autoTimer){
-      audioEndCallback=advanceAfterNarration;
-    }
-    speakCurrent();
-  }
+  if(narrationEnabled){ speakCurrent(); }
 }
 function prev(){
   var cards=currentDeck.cards||[]; if(!cards.length) return;
@@ -638,8 +500,6 @@ function prev(){
 cardEl.addEventListener('click',flip); flipBtn.addEventListener('click',flip);
 nextBtn.addEventListener('click',next); prevBtn.addEventListener('click',prev);
 voiceBtn.addEventListener('click',toggleVoice);
-shuffleBtn.addEventListener('click',toggleShuffle);
-autoBtn.addEventListener('click',toggleAuto);
 hzFlip.addEventListener('click',flip); hzNext.addEventListener('click',next); hzPrev.addEventListener('click',prev);
 cardEl.addEventListener('keydown',function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); flip(); } if(e.key==='ArrowRight'){ next(); } if(e.key==='ArrowLeft'){ prev(); } });
 var startX=0,startY=0,moved=false; function touchStart(x,y){ startX=x; startY=y; moved=false; } function touchMove(x,y){ if(Math.abs(x-startX)>12) moved=true; } function touchEnd(x,y){ var dx=x-startX; var dy=y-startY; if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){ if(dx<0){ next(); } else { prev(); } } else { if(!moved) flip(); } }
@@ -647,7 +507,6 @@ cardEl.addEventListener('touchstart',function(e){ var t=e.touches[0]; touchStart
 cardEl.addEventListener('touchmove',function(e){ var t=e.touches[0]; touchMove(t.clientX,t.clientY); },{passive:true});
 cardEl.addEventListener('touchend',function(e){ var t=e.changedTouches[0]; touchEnd(t.clientX,t.clientY); });
 var lastTap=0; document.addEventListener('touchend',function(e){ var now=Date.now(); if(now-lastTap<350){ e.preventDefault(); } lastTap=now; },{passive:false});
-document.addEventListener('visibilitychange', function(){ if(document.hidden){ stopAuto(); } });
 
 // Load voices when available (Chrome needs this)
 if(window.speechSynthesis){

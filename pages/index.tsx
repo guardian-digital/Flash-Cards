@@ -11,11 +11,6 @@ export default function HomePage() {
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [narrationEnabled, setNarrationEnabled] = useState(false);
-  const [shuffleEnabled, setShuffleEnabled] = useState(false);
-  const [autoEnabled, setAutoEnabled] = useState(false);
-  const autoTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const audioEndCallbackRef = useRef<(() => void) | null>(null);
-  const audioTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const startRef = useRef<{ x: number; y: number } | null>(null);
   const movedRef = useRef(false);
 
@@ -24,27 +19,11 @@ export default function HomePage() {
 
   const flip = useCallback(() => setFlipped((f) => !f), []);
   
-  // Define advanceAfterNarration - will be updated after next() is defined
-  const advanceAfterNarrationRef = useRef<() => void>(() => {});
-  
   const next = useCallback(() => {
     if (!hasCards) return;
-    setIndex((i) => {
-      if (shuffleEnabled) {
-        if (currentDeck.cards.length === 1) return 0;
-        let n = i;
-        while (n === i) n = Math.floor(Math.random() * currentDeck.cards.length);
-        return n;
-      }
-      return (i + 1) % currentDeck.cards.length;
-    });
+    setIndex((i) => (i + 1) % currentDeck.cards.length);
     setFlipped(false);
-    
-    // If auto is on and narration is enabled (using callback-based), set up callback for when audio finishes
-    if (autoEnabled && narrationEnabled && !autoTimerRef.current) {
-      audioEndCallbackRef.current = advanceAfterNarrationRef.current;
-    }
-  }, [hasCards, shuffleEnabled, currentDeck.cards.length, autoEnabled, narrationEnabled]);
+  }, [hasCards, currentDeck.cards.length]);
   const prev = useCallback(() => {
     if (!hasCards) return;
     setIndex((i) => (i - 1 + currentDeck.cards.length) % currentDeck.cards.length);
@@ -52,16 +31,6 @@ export default function HomePage() {
   }, [hasCards, currentDeck.cards.length]);
 
   const setDeckById = useCallback((id: string) => {
-    if (autoTimerRef.current) {
-      clearInterval(autoTimerRef.current);
-      autoTimerRef.current = null;
-    }
-    audioEndCallbackRef.current = null;
-    if (audioTimeoutRef.current) {
-      clearTimeout(audioTimeoutRef.current);
-      audioTimeoutRef.current = null;
-    }
-    setAutoEnabled(false);
     const found = id === 'all' ? getAllDeck() : DECKS.find((d) => d.id === id) || getAllDeck();
     setCurrentDeck(found);
     setIndex(0);
@@ -94,29 +63,13 @@ export default function HomePage() {
     const card = currentDeck.cards[index];
     if (!card) return;
 
-    // Stop any current audio/speech and clear timeout
+    // Stop any current audio/speech
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
     }
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-    }
-    if (audioTimeoutRef.current) {
-      clearTimeout(audioTimeoutRef.current);
-      audioTimeoutRef.current = null;
-    }
-
-    // Safety timeout: if audio doesn't finish within 45 seconds, advance anyway
-    if (audioEndCallbackRef.current) {
-      audioTimeoutRef.current = setTimeout(() => {
-        if (audioEndCallbackRef.current) {
-          const cb = audioEndCallbackRef.current;
-          audioEndCallbackRef.current = null;
-          audioTimeoutRef.current = null;
-          cb();
-        }
-      }, 45000);
     }
 
     // Try pre-generated MP3 first
@@ -125,16 +78,6 @@ export default function HomePage() {
     audio.onerror = () => {
       // Fallback to improved SpeechSynthesis
       if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-        // No audio available - if we have a callback, trigger it after a short delay
-        if (audioEndCallbackRef.current) {
-          const cb = audioEndCallbackRef.current;
-          audioEndCallbackRef.current = null;
-          if (audioTimeoutRef.current) {
-            clearTimeout(audioTimeoutRef.current);
-            audioTimeoutRef.current = null;
-          }
-          setTimeout(cb, 2000);
-        }
         return;
       }
       try {
@@ -148,45 +91,15 @@ export default function HomePage() {
         // Track when SpeechSynthesis finishes
         utter.onend = () => {
           audioRef.current = null;
-          if (audioTimeoutRef.current) {
-            clearTimeout(audioTimeoutRef.current);
-            audioTimeoutRef.current = null;
-          }
-          if (audioEndCallbackRef.current) {
-            const cb = audioEndCallbackRef.current;
-            audioEndCallbackRef.current = null;
-            // Add 1.5 second gap after audio finishes
-            setTimeout(cb, 1500);
-          }
         };
         
         window.speechSynthesis.speak(utter);
       } catch {
-        // If SpeechSynthesis also fails, trigger callback after delay
-        if (audioEndCallbackRef.current) {
-          const cb = audioEndCallbackRef.current;
-          audioEndCallbackRef.current = null;
-          if (audioTimeoutRef.current) {
-            clearTimeout(audioTimeoutRef.current);
-            audioTimeoutRef.current = null;
-          }
-          setTimeout(cb, 2000);
-        }
+        // SpeechSynthesis failed
       }
     };
     audio.onended = () => {
       audioRef.current = null;
-      if (audioTimeoutRef.current) {
-        clearTimeout(audioTimeoutRef.current);
-        audioTimeoutRef.current = null;
-      }
-      // If auto is on and we have a callback, trigger it after a short delay
-      if (audioEndCallbackRef.current) {
-        const cb = audioEndCallbackRef.current;
-        audioEndCallbackRef.current = null;
-        // Add 1.5 second gap after audio finishes
-        setTimeout(cb, 1500);
-      }
     };
     audioRef.current = audio;
     audio.play().catch(() => {
@@ -209,34 +122,8 @@ export default function HomePage() {
       setNarrationEnabled(false);
       return;
     }
-    setNarrationEnabled((on) => {
-      const nextOn = !on;
-      const wasEnabled = on;
-      
-      // If auto is on, switch between interval and callback-based
-      if (autoTimerRef.current) {
-        if (nextOn && !wasEnabled) {
-          // Narration turned on while auto is on - switch to callback
-          clearInterval(autoTimerRef.current);
-          autoTimerRef.current = null;
-          audioEndCallbackRef.current = advanceAfterNarrationRef.current;
-        } else if (!nextOn && wasEnabled) {
-          // Narration turned off while auto is on - switch to interval
-          clearInterval(autoTimerRef.current);
-          audioEndCallbackRef.current = null;
-          if (audioTimeoutRef.current) {
-            clearTimeout(audioTimeoutRef.current);
-            audioTimeoutRef.current = null;
-          }
-          autoTimerRef.current = setInterval(() => {
-            next();
-          }, 8000);
-        }
-      }
-      
-      return nextOn;
-    });
-  }, [next]);
+    setNarrationEnabled((on) => !on);
+  }, []);
 
   // Load voices when available (Chrome needs this)
   useEffect(() => {
@@ -261,46 +148,6 @@ export default function HomePage() {
     }
   }, [index, narrationEnabled, speakCurrent]);
 
-  const toggleShuffle = useCallback(() => {
-    setShuffleEnabled((s) => !s);
-  }, []);
-
-  // Update advanceAfterNarrationRef to use next()
-  useEffect(() => {
-    advanceAfterNarrationRef.current = () => {
-      next();
-    };
-  }, [next]);
-
-  const toggleAuto = useCallback(() => {
-    if (autoTimerRef.current) {
-      clearInterval(autoTimerRef.current);
-      autoTimerRef.current = null;
-      audioEndCallbackRef.current = null;
-      if (audioTimeoutRef.current) {
-        clearTimeout(audioTimeoutRef.current);
-        audioTimeoutRef.current = null;
-      }
-      setAutoEnabled(false);
-      return;
-    }
-    setAutoEnabled(true);
-    
-    if (narrationEnabled) {
-      // When narration is enabled, wait for audio to finish
-      audioEndCallbackRef.current = advanceAfterNarrationRef.current;
-      // If audio is already playing, it will trigger the callback when done
-      // If no audio is playing, start it
-      if (!audioRef.current) {
-        speakCurrent();
-      }
-    } else {
-      // When narration is disabled, use fixed interval
-      autoTimerRef.current = setInterval(() => {
-        next();
-      }, 8000);
-    }
-  }, [next, narrationEnabled, speakCurrent]);
 
   // Touch gestures for swipe and tap
   const onTouchStart = (x: number, y: number) => {
@@ -335,17 +182,6 @@ export default function HomePage() {
     return () => document.removeEventListener('keydown', onKey);
   }, [next, prev]);
 
-  useEffect(() => {
-    const onVis = () => {
-      if (document.hidden && autoTimerRef.current) {
-        clearInterval(autoTimerRef.current);
-        autoTimerRef.current = null;
-        setAutoEnabled(false);
-      }
-    };
-    document.addEventListener('visibilitychange', onVis);
-    return () => document.removeEventListener('visibilitychange', onVis);
-  }, []);
 
   const deckOptions = useMemo(
     () => [{ id: 'all', label: 'All Highlights' }, ...DECKS.map((d) => ({ id: d.id, label: d.label }))],
@@ -407,10 +243,6 @@ export default function HomePage() {
           onFlip={flip}
           onToggleVoice={toggleVoice}
           narrationEnabled={narrationEnabled}
-          onToggleShuffle={toggleShuffle}
-          shuffleEnabled={shuffleEnabled}
-          onToggleAuto={toggleAuto}
-          autoEnabled={autoEnabled}
         />
           <div className="text-center text-muted text-xs sm:text-sm mt-1 sm:mt-2 px-2">
             Tap card to flip • Swipe or use arrows to change cards
