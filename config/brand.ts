@@ -4,6 +4,7 @@
  */
 export const BRAND = {
   name: 'Flash-Cards',
+  company: 'Scottsdale Cart Tours',
   colors: {
     background: '#0B0B0C', // near-black
     surface: '#121214',

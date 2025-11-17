@@ -12,10 +12,9 @@ export function FlashCard({ card, flipped, onFlip }: FlashCardProps) {
   const frontRef = useRef<HTMLElement>(null);
   const backRef = useRef<HTMLElement>(null);
   
-  const label = useMemo(() => {
-    const g = card.group || '';
-    return g ? `Highlights – ${g.charAt(0).toUpperCase()}${g.slice(1)}` : 'All Highlights';
-  }, [card.group]);
+  // Label is now handled by deck selection, so we don't need it here
+  // Keeping this for potential future use
+  const label = useMemo(() => 'All Highlights', []);
 
   useEffect(() => {
     // Cancel any text selection caused by double-tap/click

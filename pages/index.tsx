@@ -23,6 +23,10 @@ export default function HomePage() {
   const current: Card | null = hasCards ? currentDeck.cards[index] : null;
 
   const flip = useCallback(() => setFlipped((f) => !f), []);
+  
+  // Define advanceAfterNarration - will be updated after next() is defined
+  const advanceAfterNarrationRef = useRef<() => void>(() => {});
+  
   const next = useCallback(() => {
     if (!hasCards) return;
     setIndex((i) => {
@@ -38,9 +42,9 @@ export default function HomePage() {
     
     // If auto is on and narration is enabled (using callback-based), set up callback for when audio finishes
     if (autoEnabled && narrationEnabled && !autoTimerRef.current) {
-      audioEndCallbackRef.current = advanceAfterNarration;
+      audioEndCallbackRef.current = advanceAfterNarrationRef.current;
     }
-  }, [hasCards, shuffleEnabled, currentDeck.cards.length, autoEnabled, narrationEnabled, advanceAfterNarration]);
+  }, [hasCards, shuffleEnabled, currentDeck.cards.length, autoEnabled, narrationEnabled]);
   const prev = useCallback(() => {
     if (!hasCards) return;
     setIndex((i) => (i - 1 + currentDeck.cards.length) % currentDeck.cards.length);
@@ -215,7 +219,7 @@ export default function HomePage() {
           // Narration turned on while auto is on - switch to callback
           clearInterval(autoTimerRef.current);
           autoTimerRef.current = null;
-          audioEndCallbackRef.current = advanceAfterNarration;
+          audioEndCallbackRef.current = advanceAfterNarrationRef.current;
         } else if (!nextOn && wasEnabled) {
           // Narration turned off while auto is on - switch to interval
           clearInterval(autoTimerRef.current);
@@ -232,7 +236,7 @@ export default function HomePage() {
       
       return nextOn;
     });
-  }, [advanceAfterNarration, next]);
+  }, [next]);
 
   // Load voices when available (Chrome needs this)
   useEffect(() => {
@@ -261,10 +265,11 @@ export default function HomePage() {
     setShuffleEnabled((s) => !s);
   }, []);
 
-  const advanceAfterNarration = useCallback(() => {
-    // This will be called after audio finishes + delay
-    // next() will set up the callback for the next card automatically
-    next();
+  // Update advanceAfterNarrationRef to use next()
+  useEffect(() => {
+    advanceAfterNarrationRef.current = () => {
+      next();
+    };
   }, [next]);
 
   const toggleAuto = useCallback(() => {
@@ -283,7 +288,7 @@ export default function HomePage() {
     
     if (narrationEnabled) {
       // When narration is enabled, wait for audio to finish
-      audioEndCallbackRef.current = advanceAfterNarration;
+      audioEndCallbackRef.current = advanceAfterNarrationRef.current;
       // If audio is already playing, it will trigger the callback when done
       // If no audio is playing, start it
       if (!audioRef.current) {
@@ -295,7 +300,7 @@ export default function HomePage() {
         next();
       }, 8000);
     }
-  }, [next, narrationEnabled, advanceAfterNarration, speakCurrent]);
+  }, [next, narrationEnabled, speakCurrent]);
 
   // Touch gestures for swipe and tap
   const onTouchStart = (x: number, y: number) => {
@@ -360,6 +365,9 @@ export default function HomePage() {
         aria-label="Old Town Scottsdale Tour Flashcards"
       >
         <header className="flex flex-col gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+          <div className="flex justify-center mb-2">
+            <img src="/logo.svg" alt={BRAND.company} className="h-12 sm:h-14 md:h-16" />
+          </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold m-0 leading-tight">Old Town Scottsdale Highlights</h1>
           <div className="flex gap-2 sm:gap-3 items-center justify-between">
             <DeckSelect options={deckOptions} value={currentDeck.id} onChange={setDeckById} />
@@ -404,12 +412,15 @@ export default function HomePage() {
           onToggleAuto={toggleAuto}
           autoEnabled={autoEnabled}
         />
-        <div className="text-center text-muted text-xs sm:text-sm mt-1 sm:mt-2 px-2">
-          Tap card to flip • Swipe or use arrows to change cards
+          <div className="text-center text-muted text-xs sm:text-sm mt-1 sm:mt-2 px-2">
+            Tap card to flip • Swipe or use arrows to change cards
+          </div>
+          <footer className="text-center text-muted text-xs mt-2 sm:mt-3">
+            {BRAND.company}
+          </footer>
         </div>
-      </div>
-    </>
-  );
-}
+      </>
+    );
+  }
 
 
