@@ -1,0 +1,21 @@
+# Copyright and License Enforcement
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TypeScript
+*.js linguist-language=JavaScript
+*.jsx linguist-language=JavaScript
+
+# Ensure consistent line endings
+* text=auto eol=lf
+
+# Binary files
+*.mp3 binary
+*.svg binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+
+# Documentation
+*.md text
+LICENSE text
+*.txt text
+

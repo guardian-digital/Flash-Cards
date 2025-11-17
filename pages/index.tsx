@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2025 Scottsdale Cart Tours / Guardian Digital. All rights reserved.
+ * 
+ * Main application page for Flash-Cards.
+ * 
+ * PROPRIETARY - Unauthorized use prohibited.
+ */
+
 import Head from 'next/head';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BRAND } from '@/config/brand';

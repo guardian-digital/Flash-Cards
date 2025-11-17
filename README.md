@@ -6,6 +6,9 @@ Minimalist, high-clarity study cards with a focus on accessibility and performan
 - Design: Luxury minimalism; accessible; responsive
 - Structure: `components/`, `config/`, `pages/`, `lib/`, `uploads/`
 
+**Copyright © 2025 Scottsdale Cart Tours / Guardian Digital. All rights reserved.**  
+See `LICENSE` and `docs/INTELLECTUAL_PROPERTY.md` for licensing and IP protection information.
+
 ### App Mode (Next.js)
 ```bash
 pnpm install

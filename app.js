@@ -1,3 +1,12 @@
+/**
+ * Copyright (c) 2025 Scottsdale Cart Tours / Guardian Digital. All rights reserved.
+ * 
+ * PROPRIETARY - Unauthorized use prohibited.
+ * 
+ * Single-file JavaScript for GitHub Pages deployment.
+ * Contains flashcard data and application logic.
+ */
+
 // Deck data (grouped)
 var DECKS = [
   {

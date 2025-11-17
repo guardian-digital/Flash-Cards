@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2025 Scottsdale Cart Tours / Guardian Digital. All rights reserved.
+ * 
+ * FlashCard component for displaying individual flashcards.
+ * 
+ * PROPRIETARY - Unauthorized use prohibited.
+ */
+
 import { useEffect, useMemo, useRef } from 'react';
 import type { Card } from '@/lib/data';
 

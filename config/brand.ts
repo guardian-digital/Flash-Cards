@@ -1,6 +1,10 @@
 /**
+ * Copyright (c) 2025 Scottsdale Cart Tours / Guardian Digital. All rights reserved.
+ * 
  * BRAND constants used across the Flash-Cards UI.
  * Keep this the single source of truth for colors, typography, and spacing tokens.
+ * 
+ * PROPRIETARY - Unauthorized use prohibited.
  */
 export const BRAND = {
   name: 'Flash-Cards',

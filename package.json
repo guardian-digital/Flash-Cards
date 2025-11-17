@@ -2,6 +2,9 @@
   "name": "flash-cards",
   "private": true,
   "version": "0.1.0",
+  "license": "UNLICENSED",
+  "author": "Scottsdale Cart Tours / Guardian Digital",
+  "copyright": "Copyright (c) 2025 Scottsdale Cart Tours / Guardian Digital. All rights reserved.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

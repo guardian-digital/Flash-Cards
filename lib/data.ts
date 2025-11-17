@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2025 Scottsdale Cart Tours / Guardian Digital. All rights reserved.
+ * 
+ * Flashcard data and deck definitions.
+ * 
+ * PROPRIETARY - Unauthorized use prohibited.
+ */
+
 export type Card = { front: string; back: string };
 export type Deck = { id: string; label: string; cards: Card[] };
 
