@@ -128,22 +128,22 @@ export function FlashCard({
       )}
       <section ref={frontRef} className="absolute inset-0 p-4 sm:p-5 md:p-6 backface-hidden flex flex-col gap-2 sm:gap-3 justify-center items-center overflow-visible">
           <div className="flex flex-col items-center mb-2 sm:mb-3 gap-1 sm:gap-1.5">
-            <img 
-              src="/logo.svg" 
-              alt="Scottsdale Cart Tours" 
-              className="h-16 sm:h-20 md:h-24"
-              loading="eager"
-              decoding="async"
-            />
-            <a 
-              href="https://scottsdalecarttours.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-xs sm:text-sm text-muted hover:text-accent transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              scottsdalecarttours.com
-            </a>
+                <img
+                  src="/logo.svg"
+                  alt="Scottsdale Cart Tours"
+                  className="h-32 sm:h-40 md:h-48"
+                  loading="eager"
+                  decoding="async"
+                />
+                <a
+                  href="https://scottsdalecarttours.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-base sm:text-lg md:text-xl text-muted hover:text-accent transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  scottsdalecarttours.com
+                </a>
           </div>
         <div className="uppercase tracking-[0.14em] text-sm sm:text-base md:text-lg text-muted">{label}</div>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold m-0 leading-tight text-center">{card.front}</h2>
