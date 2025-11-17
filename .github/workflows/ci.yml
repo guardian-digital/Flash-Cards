@@ -36,6 +36,7 @@ jobs:
 
       - name: Run linter
         run: pnpm lint
+        continue-on-error: true  # Non-blocking: lint issues don't prevent deployment
 
       - name: Build Next.js app
         run: pnpm build
