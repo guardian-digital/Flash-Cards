@@ -714,6 +714,31 @@ if(window.speechSynthesis){
 
 setDeckById('all');
 
+// Search functionality
+if(searchInput){
+  searchInput.addEventListener('input',function(e){
+    searchQuery=e.target.value||'';
+    applySearchFilter();
+  });
+  searchInput.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){
+      searchQuery='';
+      searchInput.value='';
+      applySearchFilter();
+      searchInput.blur();
+    }
+  });
+}
+
+if(searchClear){
+  searchClear.addEventListener('click',function(){
+    searchQuery='';
+    if(searchInput){ searchInput.value=''; }
+    applySearchFilter();
+    if(searchInput){ searchInput.focus(); }
+  });
+}
+
 // Register service worker for PWA
 if('serviceWorker' in navigator){
   window.addEventListener('load',function(){
