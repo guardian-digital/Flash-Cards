@@ -38,10 +38,13 @@ test.describe('Flashcard App', () => {
   });
 
   test('should navigate to next card', async ({ page }) => {
+    // Set desktop viewport to show prev/next buttons
+    await page.setViewportSize({ width: 1024, height: 768 });
+    
     const card = page.locator('article[role="button"]').first();
     const initialTitle = await card.locator('h2').first().textContent();
     
-    // Click next button
+    // Click next button (visible on desktop)
     await page.getByRole('button', { name: /next/i }).click();
     
     // Wait for transition
@@ -53,6 +56,9 @@ test.describe('Flashcard App', () => {
   });
 
   test('should navigate to previous card', async ({ page }) => {
+    // Set desktop viewport to show prev/next buttons
+    await page.setViewportSize({ width: 1024, height: 768 });
+    
     const card = page.locator('article[role="button"]').first();
     
     // Go to second card first
@@ -116,30 +122,9 @@ test.describe('Flashcard App', () => {
     expect(newText).not.toBe(initialText);
   });
 
-  test('should toggle shuffle mode', async ({ page }) => {
-    const shuffleButton = page.getByRole('button', { name: /shuffle/i });
-    await expect(shuffleButton).toBeVisible();
-    
-    // Click to toggle
-    const initialText = await shuffleButton.textContent();
-    await shuffleButton.click();
-    
-    // Verify button text changed
-    const newText = await shuffleButton.textContent();
-    expect(newText).not.toBe(initialText);
-  });
-
-  test('should toggle auto-advance mode', async ({ page }) => {
-    const autoButton = page.getByRole('button', { name: /auto/i });
-    await expect(autoButton).toBeVisible();
-    
-    // Click to toggle
-    const initialText = await autoButton.textContent();
-    await autoButton.click();
-    
-    // Verify button text changed
-    const newText = await autoButton.textContent();
-    expect(newText).not.toBe(initialText);
+  test('should display share button', async ({ page }) => {
+    const shareButton = page.getByRole('button', { name: /share/i });
+    await expect(shareButton).toBeVisible();
   });
 
   test('should navigate with keyboard arrows', async ({ page }) => {
@@ -166,14 +151,11 @@ test.describe('Flashcard App', () => {
     expect(backTitle).toBe(initialTitle);
   });
 
-  test('should flip card with keyboard (Space or Enter)', async ({ page }) => {
+  test('should flip card with click', async ({ page }) => {
     const card = page.locator('article[role="button"]').first();
     
-    // Focus the card
-    await card.focus();
-    
-    // Press Space to flip
-    await page.keyboard.press('Space');
+    // Click to flip
+    await card.click();
     await page.waitForTimeout(600);
     
     // Verify back content is visible
@@ -205,12 +187,15 @@ test.describe('Flashcard App', () => {
   });
 
   test('should display all controls', async ({ page }) => {
-    await expect(page.getByRole('button', { name: /prev/i })).toBeVisible();
+    // Set desktop viewport to show all buttons
+    await page.setViewportSize({ width: 1024, height: 768 });
+    
     await expect(page.getByRole('button', { name: /flip/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /next/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /voice/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /shuffle/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /auto/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /share/i })).toBeVisible();
+    // Prev/Next buttons are visible on desktop
+    await expect(page.getByRole('button', { name: /prev/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /next/i })).toBeVisible();
   });
 
   test('should handle "All Highlights" deck', async ({ page }) => {

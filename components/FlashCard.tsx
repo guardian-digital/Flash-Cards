@@ -70,6 +70,13 @@ export function FlashCard({
     }
   }, [card]);
 
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      onFlip();
+    }
+  }, [onFlip]);
+
   return (
     <article
       ref={cardRef}
@@ -77,16 +84,11 @@ export function FlashCard({
       aria-pressed={flipped ? 'true' : 'false'}
       tabIndex={0}
       aria-label="Flashcard. Press to flip."
+      onKeyDown={handleKeyDown}
       onClick={onFlip}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
-      onKeyDown={(e) => {
-        if (e.key === ' ' || e.key === 'Enter') {
-          e.preventDefault();
-          onFlip();
-        }
-      }}
         className={[
           'w-full min-h-[50vh] sm:min-h-[46vh] bg-surface rounded-xl sm:rounded-lg p-4 sm:p-5 md:p-6 shadow-overlay',
           'relative preserve-3d transition-transform duration-500 ease-out',
