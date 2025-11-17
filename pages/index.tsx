@@ -13,6 +13,7 @@ import { DECKS, getAllDeck, type Card, type Deck } from '@/lib/data';
 import { FlashCard } from '@/components/FlashCard';
 import { DeckSelect } from '@/components/DeckSelect';
 import { Controls } from '@/components/Controls';
+import { ReviewPrompt } from '@/components/ReviewPrompt';
 import { getFavoritedCards, isFavorited, toggleFavorite as toggleFavoriteUtil } from '@/lib/favorites';
 
 export default function HomePage() {
@@ -21,6 +22,7 @@ export default function HomePage() {
   const [flipped, setFlipped] = useState(false);
   const [narrationEnabled, setNarrationEnabled] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [showReviewPrompt, setShowReviewPrompt] = useState(false);
   const startRef = useRef<{ x: number; y: number } | null>(null);
   const movedRef = useRef(false);
 
@@ -323,9 +325,18 @@ export default function HomePage() {
             <span className="sm:hidden">Tap to flip • Swipe left/right to change cards</span>
             <span className="hidden sm:inline">Tap card to flip • Swipe or use arrows to change cards</span>
           </div>
-          <footer className="text-center text-muted text-xs mt-2 sm:mt-3">
-            {BRAND.company}
+          <footer className="text-center text-muted text-xs mt-2 sm:mt-3 flex flex-col gap-2">
+            <div>{BRAND.company}</div>
+            <button
+              type="button"
+              onClick={() => setShowReviewPrompt(true)}
+              className="text-accent hover:text-accent-hover transition-colors text-xs underline"
+              aria-label="Leave a review"
+            >
+              Leave a Review
+            </button>
           </footer>
+          {showReviewPrompt && <ReviewPrompt onClose={() => setShowReviewPrompt(false)} />}
         </div>
       </>
     );

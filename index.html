@@ -85,6 +85,10 @@
     .favorite-btn.active svg{fill:currentColor;}
     .favorite-btn svg{width:20px;height:20px;}
     @media (min-width:640px){ .favorite-btn svg{width:24px;height:24px;} }
+    .review-link{transition:opacity 0.2s;}
+    .review-link:active{opacity:0.7;}
+    .review-modal-content{animation:fadeIn 0.2s ease-out;}
+    @keyframes fadeIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
   </style>
   <meta name="description" content="Mobile-optimized flashcards for Old Town Scottsdale tours." />
   <meta name="theme-color" content="#0b0b0c" />
@@ -132,7 +136,26 @@
       <span class="mobile-hint">Tap to flip • Swipe left/right to change cards</span>
       <span class="desktop-hint">Tap card to flip • Swipe or use arrows to change cards</span>
     </div>
-    <footer class="text-center text-muted text-xs mt-2" style="color:var(--muted);font-size:12px;margin-top:8px;text-align:center;">Scottsdale Cart Tours</footer>
+    <footer class="text-center text-muted text-xs mt-2" style="color:var(--muted);font-size:12px;margin-top:8px;text-align:center;display:flex;flex-direction:column;gap:4px;">
+      <div>Scottsdale Cart Tours</div>
+      <button id="reviewBtn" class="review-link" aria-label="Leave a review" style="color:var(--accent);background:none;border:none;text-decoration:underline;cursor:pointer;font-size:12px;padding:0;">Leave a Review</button>
+    </footer>
+    <div id="reviewModal" class="review-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:50;align-items:center;justify-content:center;padding:16px;">
+      <div class="review-modal-content" style="background:var(--card);border-radius:16px;padding:24px;max-width:400px;width:100%;box-shadow:0 8px 24px rgba(0,0,0,0.45);" onclick="event.stopPropagation();">
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px;">
+          <h3 style="font-size:20px;font-weight:700;color:var(--fg);margin:0;">Love Your Tour?</h3>
+          <button id="closeReviewModal" aria-label="Close" style="background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;">✕</button>
+        </div>
+        <p style="color:var(--muted);margin-bottom:24px;font-size:14px;">Help us improve! Scan the QR code or tap the link below to leave a review on Google.</p>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:24px;">
+          <div style="background:#fff;padding:16px;border-radius:8px;">
+            <img id="qrCode" src="" alt="QR code for Google reviews" style="width:192px;height:192px;display:block;">
+          </div>
+          <a href="https://g.page/r/CXN08ldPlfATEBM/review" target="_blank" rel="noopener noreferrer" style="padding:12px 24px;border-radius:999px;background:var(--accent);color:#111;text-decoration:none;font-weight:600;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.25);">Leave a Review on Google</a>
+        </div>
+        <p style="font-size:11px;color:var(--muted);text-align:center;margin:0;">Your feedback helps us provide better tours!</p>
+      </div>
+    </div>
   </div>
   <div class="hotzones" aria-hidden="true">
     <div class="prev" id="hzPrev"></div>

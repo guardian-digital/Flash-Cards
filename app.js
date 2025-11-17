@@ -607,4 +607,35 @@ if(window.speechSynthesis){
 
 setDeckById('all');
 
+// Review modal functionality
+var reviewBtn=document.getElementById('reviewBtn');
+var reviewModal=document.getElementById('reviewModal');
+var closeReviewModal=document.getElementById('closeReviewModal');
+var qrCode=document.getElementById('qrCode');
+var GOOGLE_REVIEWS_URL='https://g.page/r/CXN08ldPlfATEBM/review';
+
+if(qrCode){
+  qrCode.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(GOOGLE_REVIEWS_URL);
+}
+
+if(reviewBtn && reviewModal){
+  reviewBtn.addEventListener('click',function(){
+    reviewModal.style.display='flex';
+  });
+}
+
+if(closeReviewModal && reviewModal){
+  closeReviewModal.addEventListener('click',function(){
+    reviewModal.style.display='none';
+  });
+}
+
+if(reviewModal){
+  reviewModal.addEventListener('click',function(e){
+    if(e.target===reviewModal){
+      reviewModal.style.display='none';
+    }
+  });
+}
+
 
