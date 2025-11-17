@@ -14,6 +14,7 @@ import { FlashCard } from '@/components/FlashCard';
 import { DeckSelect } from '@/components/DeckSelect';
 import { Controls } from '@/components/Controls';
 import { ReviewPrompt } from '@/components/ReviewPrompt';
+import { InstallPrompt } from '@/components/InstallPrompt';
 import { getFavoritedCards, isFavorited, toggleFavorite as toggleFavoriteUtil } from '@/lib/favorites';
 
 export default function HomePage() {
@@ -265,6 +266,13 @@ export default function HomePage() {
         <title>Old Town Scottsdale – Tour Flashcards</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content={BRAND.colors.background} />
+        <meta name="description" content="Mobile-optimized flashcards for Old Town Scottsdale tours by Scottsdale Cart Tours" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/logo.svg" />
+        <link rel="apple-touch-icon" href="/logo.svg" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Scottsdale Tours" />
       </Head>
       <div
         className="min-h-full max-w-[600px] mx-auto px-3 sm:px-4 pt-[max(env(safe-area-inset-top),8px)] pb-[max(calc(10px+env(safe-area-inset-bottom)),16px)] flex flex-col gap-2 sm:gap-3"

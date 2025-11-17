@@ -1,0 +1,20 @@
+{
+  "name": "Old Town Scottsdale Tour Flashcards",
+  "short_name": "Scottsdale Tours",
+  "description": "Mobile-optimized flashcards for Old Town Scottsdale tours by Scottsdale Cart Tours",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0B0C",
+  "theme_color": "#0B0B0C",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["travel", "education", "tourism"]
+}
+

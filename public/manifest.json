@@ -1,0 +1,49 @@
+{
+  "name": "Old Town Scottsdale Tour Flashcards",
+  "short_name": "Scottsdale Tours",
+  "description": "Mobile-optimized flashcards for Old Town Scottsdale tours by Scottsdale Cart Tours",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0B0C",
+  "theme_color": "#0B0B0C",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["travel", "education", "tourism"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "All Highlights",
+      "short_name": "All",
+      "description": "View all tour highlights",
+      "url": "/?deck=all",
+      "icons": [{ "src": "/logo.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Favorites",
+      "short_name": "Favs",
+      "description": "View favorited cards",
+      "url": "/?deck=favorites",
+      "icons": [{ "src": "/logo.svg", "sizes": "192x192" }]
+    }
+  ]
+}
+
