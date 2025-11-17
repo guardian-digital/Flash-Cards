@@ -412,7 +412,14 @@ if(document.readyState==='loading'){
 }
 
 function setDeckById(id){
-  var found = (id==='all') ? allDeck : (DECKS.find(function(d){return d.id===id;}) || allDeck);
+  var found;
+  if(id==='favorites'){
+    var allCards=allDeck.cards;
+    var favoritedCards=getFavoritedCards(allCards);
+    found={id:'favorites',label:'⭐ Favorites',cards:favoritedCards};
+  }else{
+    found = (id==='all') ? allDeck : (DECKS.find(function(d){return d.id===id;}) || allDeck);
+  }
   if(!found){
     console.error('Deck not found:', id);
     found = allDeck;
@@ -564,6 +571,26 @@ function prev(){
 cardEl.addEventListener('click',flip); flipBtn.addEventListener('click',flip);
 nextBtn.addEventListener('click',next); prevBtn.addEventListener('click',prev);
 voiceBtn.addEventListener('click',toggleVoice);
+if(favoriteBtn){
+  favoriteBtn.addEventListener('click',function(e){
+    e.stopPropagation();
+    var cards=currentDeck.cards||[];
+    if(!cards.length) return;
+    var item=cards[index];
+    if(!item) return;
+    var newFavorited=toggleFavorite(item);
+    
+    // If on favorites deck and unfavorited, remove from current deck
+    if(currentDeck.id==='favorites' && !newFavorited){
+      var updatedCards=currentDeck.cards.filter(function(c){return c.front!==item.front;});
+      currentDeck={id:'favorites',label:'⭐ Favorites',cards:updatedCards};
+      if(index>=updatedCards.length){
+        index=Math.max(0,updatedCards.length-1);
+      }
+    }
+    render();
+  });
+}
 hzFlip.addEventListener('click',flip); hzNext.addEventListener('click',next); hzPrev.addEventListener('click',prev);
 cardEl.addEventListener('keydown',function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); flip(); } if(e.key==='ArrowRight'){ next(); } if(e.key==='ArrowLeft'){ prev(); } });
 var startX=0,startY=0,moved=false; function touchStart(x,y){ startX=x; startY=y; moved=false; } function touchMove(x,y){ if(Math.abs(x-startX)>12) moved=true; } function touchEnd(x,y){ var dx=x-startX; var dy=y-startY; if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){ if(dx<0){ next(); } else { prev(); } } else { if(!moved) flip(); } }
