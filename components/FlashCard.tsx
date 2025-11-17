@@ -13,9 +13,11 @@ type FlashCardProps = {
   card: Card;
   flipped: boolean;
   onFlip: () => void;
+  isFavorited?: boolean;
+  onToggleFavorite?: () => void;
 };
 
-export function FlashCard({ card, flipped, onFlip }: FlashCardProps) {
+export function FlashCard({ card, flipped, onFlip, isFavorited = false, onToggleFavorite }: FlashCardProps) {
   const cardRef = useRef<HTMLElement>(null);
   const frontRef = useRef<HTMLElement>(null);
   const backRef = useRef<HTMLElement>(null);
@@ -77,6 +79,40 @@ export function FlashCard({ card, flipped, onFlip }: FlashCardProps) {
         flipped ? '[transform:rotateY(180deg)]' : '',
       ].join(' ')}
     >
+      {/* Favorite button - positioned absolutely, visible on both sides */}
+      {onToggleFavorite && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleFavorite();
+          }}
+          aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+          className={[
+            'absolute top-3 right-3 sm:top-4 sm:right-4 z-10',
+            'w-10 h-10 sm:w-12 sm:h-12 rounded-full',
+            'flex items-center justify-center',
+            'bg-surface/80 backdrop-blur-sm border border-white/20',
+            'hover:bg-surface hover:border-white/30',
+            'transition-all duration-200',
+            'touch-manipulation',
+            isFavorited ? 'text-accent' : 'text-muted hover:text-accent',
+          ].join(' ')}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill={isFavorited ? 'currentColor' : 'none'}
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="w-5 h-5 sm:w-6 sm:h-6"
+          >
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+        </button>
+      )}
       <section ref={frontRef} className="absolute inset-0 p-4 sm:p-5 md:p-6 backface-hidden flex flex-col gap-2 sm:gap-3 justify-center items-center overflow-visible">
         <div className="flex justify-center mb-2 sm:mb-3">
           <img src="/logo.svg" alt="Scottsdale Cart Tours" className="h-10 sm:h-12 md:h-14" />

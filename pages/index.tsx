@@ -13,12 +13,14 @@ import { DECKS, getAllDeck, type Card, type Deck } from '@/lib/data';
 import { FlashCard } from '@/components/FlashCard';
 import { DeckSelect } from '@/components/DeckSelect';
 import { Controls } from '@/components/Controls';
+import { getFavoritedCards, isFavorited, toggleFavorite as toggleFavoriteUtil } from '@/lib/favorites';
 
 export default function HomePage() {
   const [currentDeck, setCurrentDeck] = useState<Deck>(getAllDeck());
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [narrationEnabled, setNarrationEnabled] = useState(false);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const startRef = useRef<{ x: number; y: number } | null>(null);
   const movedRef = useRef(false);
 
@@ -39,11 +41,66 @@ export default function HomePage() {
   }, [hasCards, currentDeck.cards.length]);
 
   const setDeckById = useCallback((id: string) => {
-    const found = id === 'all' ? getAllDeck() : DECKS.find((d) => d.id === id) || getAllDeck();
-    setCurrentDeck(found);
+    if (id === 'favorites') {
+      const allCards = getAllDeck().cards;
+      const favoritedCards = getFavoritedCards(allCards);
+      setCurrentDeck({ id: 'favorites', label: '⭐ Favorites', cards: favoritedCards });
+    } else {
+      const found = id === 'all' ? getAllDeck() : DECKS.find((d) => d.id === id) || getAllDeck();
+      setCurrentDeck(found);
+    }
     setIndex(0);
     setFlipped(false);
   }, []);
+
+  // Load favorites on mount and when they change
+  useEffect(() => {
+    const loadFavorites = () => {
+      if (typeof window !== 'undefined') {
+        try {
+          const stored = localStorage.getItem('flashcards-favorites');
+          if (stored) {
+            const keys = JSON.parse(stored) as string[];
+            setFavorites(new Set(keys));
+          }
+        } catch {
+          // Ignore errors
+        }
+      }
+    };
+    
+    loadFavorites();
+    
+    // Listen for storage changes (from other tabs)
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', loadFavorites);
+      return () => window.removeEventListener('storage', loadFavorites);
+    }
+  }, []);
+
+  const toggleFavorite = useCallback(() => {
+    if (!current) return;
+    const newFavorited = toggleFavoriteUtil(current);
+    
+    // Update favorites state
+    const newFavorites = new Set(favorites);
+    const key = current.front;
+    if (newFavorited) {
+      newFavorites.add(key);
+    } else {
+      newFavorites.delete(key);
+    }
+    setFavorites(newFavorites);
+    
+    // If we're on favorites deck and unfavorited, remove from current deck
+    if (currentDeck.id === 'favorites' && !newFavorited) {
+      const updatedCards = currentDeck.cards.filter(c => c.front !== key);
+      setCurrentDeck({ ...currentDeck, cards: updatedCards });
+      if (index >= updatedCards.length) {
+        setIndex(Math.max(0, updatedCards.length - 1));
+      }
+    }
+  }, [current, favorites, currentDeck, index]);
 
   // Audio state
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -192,7 +249,11 @@ export default function HomePage() {
 
 
   const deckOptions = useMemo(
-    () => [{ id: 'all', label: 'All Highlights' }, ...DECKS.map((d) => ({ id: d.id, label: d.label }))],
+    () => [
+      { id: 'all', label: 'All Highlights' },
+      { id: 'favorites', label: '⭐ Favorites' },
+      ...DECKS.map((d) => ({ id: d.id, label: d.label })),
+    ],
     []
   );
 
@@ -238,7 +299,13 @@ export default function HomePage() {
                 onTouchEnd(t.clientX, t.clientY);
               }}
             >
-              <FlashCard card={current} flipped={flipped} onFlip={flip} />
+              <FlashCard
+                card={current}
+                flipped={flipped}
+                onFlip={flip}
+                isFavorited={isFavorited(current)}
+                onToggleFavorite={toggleFavorite}
+              />
             </div>
           ) : (
             <div className="text-muted">No cards</div>

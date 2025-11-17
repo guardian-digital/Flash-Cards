@@ -78,6 +78,13 @@
     .mobile-hint{display:inline;}
     .desktop-hint{display:none;}
     @media (min-width:640px){ .mobile-hint{display:none;} .desktop-hint{display:inline;} }
+    .favorite-btn{position:absolute;top:12px;right:12px;z-index:10;width:40px;height:40px;border-radius:50%;background:var(--card);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+    @media (min-width:640px){ .favorite-btn{top:16px;right:16px;width:48px;height:48px;} }
+    .favorite-btn:hover{background:var(--card);border-color:rgba(255,255,255,.3);}
+    .favorite-btn.active{color:var(--accent);}
+    .favorite-btn.active svg{fill:currentColor;}
+    .favorite-btn svg{width:20px;height:20px;}
+    @media (min-width:640px){ .favorite-btn svg{width:24px;height:24px;} }
   </style>
   <meta name="description" content="Mobile-optimized flashcards for Old Town Scottsdale tours." />
   <meta name="theme-color" content="#0b0b0c" />
@@ -95,6 +102,11 @@
     </header>
     <div class="card-wrap">
       <article class="card" id="card" role="button" aria-pressed="false" tabindex="0" aria-label="Flashcard. Tap to flip.">
+        <button id="favoriteBtn" class="favorite-btn" aria-label="Add to favorites" style="display:none;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+        </button>
         <section class="face front" id="front">
           <div style="display:flex;justify-content:center;margin-bottom:12px;"><img src="logo.svg" alt="Scottsdale Cart Tours" style="height:40px;" /></div>
           <div class="label-line" id="frontDeckLabel">Deck</div>

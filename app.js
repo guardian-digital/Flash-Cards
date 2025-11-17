@@ -313,6 +313,42 @@ var currentDeck=allDeck;
 var index=0; var flipped=false;
 var narrationEnabled=false;
 
+// Favorites management
+var FAVORITES_KEY='flashcards-favorites';
+function getFavorites(){
+  try{
+    var stored=localStorage.getItem(FAVORITES_KEY);
+    if(!stored) return new Set();
+    return new Set(JSON.parse(stored));
+  }catch{
+    return new Set();
+  }
+}
+function saveFavorites(favorites){
+  try{
+    localStorage.setItem(FAVORITES_KEY,JSON.stringify(Array.from(favorites)));
+  }catch(e){
+    console.error('Failed to save favorites:',e);
+  }
+}
+function isFavorited(card){
+  return getFavorites().has(card.front);
+}
+function toggleFavorite(card){
+  var favorites=getFavorites();
+  if(favorites.has(card.front)){
+    favorites.delete(card.front);
+  }else{
+    favorites.add(card.front);
+  }
+  saveFavorites(favorites);
+  return favorites.has(card.front);
+}
+function getFavoritedCards(cards){
+  var favorites=getFavorites();
+  return cards.filter(function(card){ return favorites.has(card.front); });
+}
+
 // Deck selector change handler
 function handleDeckChange(e){ 
   var selectedId = e.target.value;
@@ -338,6 +374,12 @@ function populateDeckSelector(){
   allOption.value='all';
   allOption.textContent='All Highlights';
   deckSelect.appendChild(allOption);
+  
+  // Add "Favorites" option
+  var favOption=document.createElement('option');
+  favOption.value='favorites';
+  favOption.textContent='⭐ Favorites';
+  deckSelect.appendChild(favOption);
   
   // Add each deck option
   DECKS.forEach(function(deck){
@@ -466,13 +508,26 @@ function toggleVoice(){
 frontDeckLabel.textContent='All Highlights';
 function render(){
   var cards=currentDeck.cards || [];
-  if(!cards.length){ frontTitleEl.textContent='No cards'; backTitleEl.textContent='No cards'; backTextEl.textContent='This deck is empty.'; pagerEl.textContent='0 / 0'; return; }
+  if(!cards.length){ frontTitleEl.textContent='No cards'; backTitleEl.textContent='No cards'; backTextEl.textContent='This deck is empty.'; pagerEl.textContent='0 / 0'; if(favoriteBtn){favoriteBtn.style.display='none';} return; }
   if(index<0) index=0; if(index>=cards.length) index=cards.length-1;
   var item = cards[index];
   frontTitleEl.textContent=item.front; backTitleEl.textContent=item.front; backTextEl.textContent=item.back;
   pagerEl.textContent=(index+1)+' / '+cards.length;
   if(flipped){ cardEl.classList.add('flipped'); cardEl.setAttribute('aria-pressed','true'); }
   else { cardEl.classList.remove('flipped'); cardEl.setAttribute('aria-pressed','false'); }
+  
+  // Update favorite button
+  if(favoriteBtn && item){
+    favoriteBtn.style.display='flex';
+    var favorited=isFavorited(item);
+    if(favorited){
+      favoriteBtn.classList.add('active');
+      favoriteBtn.setAttribute('aria-label','Remove from favorites');
+    }else{
+      favoriteBtn.classList.remove('active');
+      favoriteBtn.setAttribute('aria-label','Add to favorites');
+    }
+  }
   
   // Dynamically size card to fit all content without scrolling
   setTimeout(function(){
