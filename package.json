@@ -19,7 +19,9 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:local": "playwright test --project=chromium",
     "test:all": "pnpm test && pnpm test:e2e",
-    "handoff:generate": "node scripts/generate-agent-handoff.mjs"
+    "handoff:generate": "node scripts/generate-agent-handoff.mjs",
+    "workflow:cleanup": "node scripts/cleanup-workflow-runs.js",
+    "workflow:cleanup:delete-old": "node scripts/cleanup-workflow-runs.js --delete-old"
   },
   "dependencies": {
     "next": "^16.0.3",
