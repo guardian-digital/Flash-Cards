@@ -418,7 +418,69 @@ if(document.readyState==='loading'){
   populateDeckSelector();
 }
 
+// Simple fuzzy search function
+function fuzzySearch(cards,query){
+  if(!query || !query.trim()){ return cards; }
+  var normalizedQuery=query.toLowerCase().trim();
+  var queryWords=normalizedQuery.split(/\s+/).filter(function(w){ return w.length>0; });
+  return cards.filter(function(card){
+    var frontText=(card.front||'').toLowerCase();
+    var backText=(card.back||'').toLowerCase();
+    var fullText=frontText+' '+backText;
+    return queryWords.every(function(word){ return fullText.indexOf(word)!==-1; });
+  });
+}
+
+function applySearchFilter(){
+  if(!searchQuery.trim()){
+    currentDeck=baseDeck;
+  }else{
+    var filteredCards=fuzzySearch(baseDeck.cards,searchQuery);
+    currentDeck={
+      id:baseDeck.id,
+      label:baseDeck.label,
+      cards:filteredCards
+    };
+  }
+  if(index>=currentDeck.cards.length && currentDeck.cards.length>0){
+    index=0;
+  }else if(currentDeck.cards.length===0){
+    index=0;
+  }
+  render();
+  updateSearchUI();
+}
+
+function updateSearchUI(){
+  if(searchClear && searchIcon){
+    if(searchQuery.trim()){
+      searchClear.style.display='block';
+      searchIcon.classList.add('hidden');
+    }else{
+      searchClear.style.display='none';
+      searchIcon.classList.remove('hidden');
+    }
+  }
+  if(searchResults){
+    if(searchQuery.trim() && currentDeck.cards.length>0){
+      searchResults.textContent=' ('+currentDeck.cards.length+' result'+(currentDeck.cards.length!==1?'s':'')+')';
+      searchResults.style.display='inline';
+    }else{
+      searchResults.style.display='none';
+    }
+  }
+  if(noResults){
+    if(searchQuery.trim() && currentDeck.cards.length===0){
+      noResults.style.display='block';
+    }else{
+      noResults.style.display='none';
+    }
+  }
+}
+
 function setDeckById(id){
+  searchQuery='';
+  if(searchInput){ searchInput.value=''; }
   var found;
   if(id==='favorites'){
     var allCards=allDeck.cards;
@@ -431,10 +493,9 @@ function setDeckById(id){
     console.error('Deck not found:', id);
     found = allDeck;
   }
-  currentDeck = found;
-  frontDeckLabel.textContent = found.label;
-  index = 0; flipped=false;
-  render();
+  baseDeck = found;
+  applySearchFilter();
+  if(frontDeckLabel){ frontDeckLabel.textContent = found.label; }
   if(narrationEnabled) speakCurrent();
 }
 
