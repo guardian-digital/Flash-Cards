@@ -46,6 +46,7 @@ export default function HomePage() {
       return baseTranslatedDeck;
     }
     const filteredCards = fuzzySearch(baseTranslatedDeck.cards, searchQuery);
+    trackSearch(searchQuery, filteredCards.length);
     return {
       ...baseTranslatedDeck,
       cards: filteredCards,
@@ -247,8 +248,10 @@ export default function HomePage() {
       setNarrationEnabled(false);
       return;
     }
-    setNarrationEnabled((on) => !on);
-  }, []);
+    const newState = !narrationEnabled;
+    trackNarrationToggle(newState);
+    setNarrationEnabled(newState);
+  }, [narrationEnabled]);
 
   // Load voices when available (Chrome needs this)
   useEffect(() => {
