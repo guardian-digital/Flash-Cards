@@ -615,7 +615,15 @@ var qrCode=document.getElementById('qrCode');
 var GOOGLE_REVIEWS_URL='https://g.page/r/CXN08ldPlfATEBM/review';
 
 if(qrCode){
-  qrCode.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(GOOGLE_REVIEWS_URL);
+  // Increased size and margin for better scanability
+  qrCode.src='https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=2&data='+encodeURIComponent(GOOGLE_REVIEWS_URL);
+  qrCode.onerror=function(){
+    // Fallback if QR code fails to load
+    var parent=qrCode.parentElement;
+    if(parent){
+      parent.innerHTML='<p style="font-size:12px;color:var(--muted);text-align:center;padding:8px;">QR code unavailable. Please use the link below.</p>';
+    }
+  };
 }
 
 if(reviewBtn && reviewModal){

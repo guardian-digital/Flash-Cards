@@ -16,8 +16,8 @@ type ReviewPromptProps = {
 
 export function ReviewPrompt({ onClose }: ReviewPromptProps) {
   // Generate QR code using QR Server API
-  // For production, consider using a library like 'qrcode.react' or 'react-qr-code'
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(GOOGLE_REVIEWS_URL)}`;
+  // Size increased for better scanability on mobile devices
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=2&data=${encodeURIComponent(GOOGLE_REVIEWS_URL)}`;
 
   return (
     <div
@@ -53,18 +53,25 @@ export function ReviewPrompt({ onClose }: ReviewPromptProps) {
         </p>
 
         <div className="flex flex-col items-center gap-4 mb-6">
-          <div className="bg-white p-4 rounded-lg">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
             <img
               src={qrCodeUrl}
-              alt="QR code for Google reviews"
-              className="w-48 h-48"
+              alt="QR code for Google reviews - Scan to leave a review"
+              className="w-48 h-48 sm:w-56 sm:h-56"
               onError={(e) => {
                 // Fallback if QR code fails to load
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent) {
+                  parent.innerHTML = '<p class="text-sm text-muted">QR code unavailable. Please use the link below.</p>';
+                }
               }}
             />
           </div>
+          <p className="text-xs text-muted text-center -mt-2">
+            Scan with your phone camera
+          </p>
 
           <a
             href={GOOGLE_REVIEWS_URL}
