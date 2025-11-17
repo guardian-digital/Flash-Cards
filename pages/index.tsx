@@ -53,13 +53,13 @@ export default function HomePage() {
         const allCards = getAllDeck().cards;
         const favoritedCards = getFavoritedCards(allCards);
         setCurrentDeck({ id: 'favorites', label: t('deck.favorites', language), cards: favoritedCards });
-    } else {
-      const found = id === 'all' ? getAllDeck() : DECKS.find((d) => d.id === id) || getAllDeck();
-      setCurrentDeck(found);
-    }
-    setIndex(0);
-    setFlipped(false);
-  }, []);
+      } else {
+        const found = id === 'all' ? getAllDeck() : DECKS.find((d) => d.id === id) || getAllDeck();
+        setCurrentDeck(found);
+      }
+      setIndex(0);
+      setFlipped(false);
+    }, [language]);
 
   // Load favorites on mount and when they change
   useEffect(() => {
