@@ -115,6 +115,33 @@ export const DECKS: Deck[] = [
       { front: 'Waterfront Promenade', back: "This canal-side walk links art, dining, and shaded paths, creating a perfect route for a post-tour stroll. The promenade spans over a mile and includes public art installations and restaurants." },
       { front: 'Marshall Way Murals', back: "A colorful corridor of modern desert art that transforms Marshall Way into an open-air gallery. Over 20 murals span multiple blocks, painted by internationally recognized street artists." }
     ]
+  },
+  {
+    id: 'historic',
+    label: 'Historic Old Town District',
+    cards: [
+      { front: 'Old Adobe Mission', back: "Hand-built by Mexican settlers from 1917 to 1933, this adobe church is one of Old Town's earliest landmarks. Step inside to see the quiet desert chapel." },
+      { front: 'Little Red Schoolhouse', back: "Built in 1909, this was Scottsdale's first schoolhouse—one teacher, eight grades, 30 students in a single room. The teacher, Lulu Oatman, earned $75 a month. It's now a small museum." },
+      { front: 'Rusty Spur Saloon', back: "This building started as the Farmers & Merchants Bank in 1921, complete with a walk-in vault that still sits behind the bar. It became a saloon in 1955. Drop in later for live country music nightly." },
+      { front: 'Historic Old Town Square', back: "This square was the commercial heart of Scottsdale from the 1920s through the 1950s. Today, it's home to galleries, boutiques, and restaurants, but the architecture preserves that early 20th-century character." },
+      { front: 'Western-Wear Boutiques', back: "Historic Old Town is home to authentic Western-wear shops offering cowboy boots, hats, and traditional Western attire. These stores have been serving locals and visitors for decades, preserving Scottsdale's cowboy heritage." },
+      { front: 'Native American Jewelry Shops', back: "Handcrafted turquoise, silver, and traditional Native American jewelry can be found throughout Historic Old Town. These shops feature authentic pieces from local and regional Native artists, representing centuries of Southwestern craftsmanship." },
+      { front: 'Historic Western Revival Storefronts', back: "Wood-beamed, low-slung Western Revival buildings from the 1950s–70s preserve the cowboy character that Scottsdale was built on. These buildings are now home to galleries, boutiques, and restaurants, maintaining the area's historic charm." }
+    ]
+  },
+  {
+    id: 'fashion',
+    label: 'Scottsdale Fashion Square',
+    cards: [
+      { front: 'Nordstrom & Neiman Marcus', back: "Scottsdale Fashion Square features flagship department stores Nordstrom and Neiman Marcus, offering luxury fashion, beauty, and home goods. These anchor stores have been part of the mall since its major expansion in the 1990s." },
+      { front: 'Luxury Brands', back: "The mall houses an impressive collection of luxury retailers including Louis Vuitton, Gucci, Tiffany & Co., Burberry, and Cartier. These flagship stores offer the latest collections from the world's most prestigious fashion houses." },
+      { front: 'Apple Store', back: "The Apple Store at Fashion Square provides the latest technology products, accessories, and expert support. It's one of the largest Apple retail locations in the Southwest, featuring the full range of Apple devices and services." },
+      { front: '200+ Premium Retailers', back: "With over 200 premium retailers, Scottsdale Fashion Square is the largest shopping destination in the Southwest. The mall spans 1.9 million square feet and offers everything from high-end fashion to specialty stores." },
+      { front: 'Fine Dining Restaurants', back: "Fashion Square features several fine dining restaurants offering sophisticated cuisine in elegant settings. These restaurants provide a perfect complement to a day of luxury shopping, with menus crafted by renowned chefs." },
+      { front: 'Luxury Cinema', back: "The mall includes a luxury cinema with premium seating, enhanced sound systems, and gourmet concessions. It's the perfect place to catch the latest films in comfort and style after a day of shopping." },
+      { front: 'Multiple Casual Dining Options', back: "In addition to fine dining, Fashion Square offers numerous casual dining options ranging from quick-service restaurants to sit-down cafes. There's something to satisfy every taste and budget." },
+      { front: 'Fashion Square Location', back: "Located at 7014 E Camelback Rd, Scottsdale Fashion Square is easily accessible from Old Town, just a short drive or ride away. The mall's central location makes it a convenient destination for visitors exploring the area." }
+    ]
   }
 ];
 

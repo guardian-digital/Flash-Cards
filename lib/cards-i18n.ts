@@ -419,6 +419,281 @@ export const CARDS_I18N: MultilingualCard[] = [
       },
     },
   },
+  // Historic Old Town District
+  {
+    id: 'little-red-schoolhouse',
+    translations: {
+      en: {
+        front: 'Little Red Schoolhouse',
+        back: "Built in 1909, this was Scottsdale's first schoolhouse—one teacher, eight grades, 30 students in a single room. The teacher, Lulu Oatman, earned $75 a month. It's now a small museum.",
+      },
+      es: {
+        front: 'Pequeña Escuela Roja',
+        back: 'Construida en 1909, esta fue la primera escuela de Scottsdale: un maestro, ocho grados, 30 estudiantes en una sola habitación. La maestra, Lulu Oatman, ganaba $75 al mes. Ahora es un pequeño museo.',
+      },
+      fr: {
+        front: 'Petite École Rouge',
+        back: 'Construite en 1909, c\'était la première école de Scottsdale—un enseignant, huit niveaux, 30 élèves dans une seule salle. L\'enseignante, Lulu Oatman, gagnait 75 $ par mois. C\'est maintenant un petit musée.',
+      },
+      de: {
+        front: 'Kleine Rote Schule',
+        back: 'Erbaut im Jahr 1909, war dies Scottsdales erste Schule—ein Lehrer, acht Klassen, 30 Schüler in einem einzigen Raum. Die Lehrerin Lulu Oatman verdiente 75 $ pro Monat. Es ist jetzt ein kleines Museum.',
+      },
+    },
+  },
+  {
+    id: 'rusty-spur-saloon',
+    translations: {
+      en: {
+        front: 'Rusty Spur Saloon',
+        back: "This building started as the Farmers & Merchants Bank in 1921, complete with a walk-in vault that still sits behind the bar. It became a saloon in 1955. Drop in later for live country music nightly.",
+      },
+      es: {
+        front: 'Salón Rusty Spur',
+        back: 'Este edificio comenzó como el Banco de Agricultores y Comerciantes en 1921, completo con una bóveda que todavía está detrás del bar. Se convirtió en un salón en 1955. Visítalo más tarde para música country en vivo todas las noches.',
+      },
+      fr: {
+        front: 'Saloon Rusty Spur',
+        back: 'Ce bâtiment a commencé comme la Banque des Fermiers et Commerçants en 1921, avec un coffre-fort qui se trouve toujours derrière le bar. Il est devenu un saloon en 1955. Passez plus tard pour de la musique country en direct tous les soirs.',
+      },
+      de: {
+        front: 'Rusty Spur Saloon',
+        back: 'Dieses Gebäude begann 1921 als Farmers & Merchants Bank, komplett mit einem Tresor, der noch hinter der Bar steht. Es wurde 1955 zu einem Saloon. Kommen Sie später vorbei für Live-Country-Musik jeden Abend.',
+      },
+    },
+  },
+  {
+    id: 'western-wear-boutiques',
+    translations: {
+      en: {
+        front: 'Western-Wear Boutiques',
+        back: "Historic Old Town is home to authentic Western-wear shops offering cowboy boots, hats, and traditional Western attire. These stores have been serving locals and visitors for decades, preserving Scottsdale's cowboy heritage.",
+      },
+      es: {
+        front: 'Boutiques de Ropa Vaquera',
+        back: 'El Viejo Pueblo Histórico alberga tiendas auténticas de ropa vaquera que ofrecen botas de vaquero, sombreros y atuendos tradicionales del Oeste. Estas tiendas han servido a locales y visitantes durante décadas, preservando el patrimonio vaquero de Scottsdale.',
+      },
+      fr: {
+        front: 'Boutiques de Vêtements Western',
+        back: 'Le Vieux Scottsdale historique abrite des magasins authentiques de vêtements western offrant des bottes de cowboy, des chapeaux et des tenues western traditionnelles. Ces magasins servent les habitants et les visiteurs depuis des décennies, préservant le patrimoine cowboy de Scottsdale.',
+      },
+      de: {
+        front: 'Western-Bekleidungsboutiquen',
+        back: 'Das historische Alte Scottsdale beherbergt authentische Western-Bekleidungsgeschäfte, die Cowboy-Stiefel, Hüte und traditionelle Western-Kleidung anbieten. Diese Geschäfte bedienen Einheimische und Besucher seit Jahrzehnten und bewahren das Cowboy-Erbe von Scottsdale.',
+      },
+    },
+  },
+  {
+    id: 'native-american-jewelry-shops',
+    translations: {
+      en: {
+        front: 'Native American Jewelry Shops',
+        back: "Handcrafted turquoise, silver, and traditional Native American jewelry can be found throughout Historic Old Town. These shops feature authentic pieces from local and regional Native artists, representing centuries of Southwestern craftsmanship.",
+      },
+      es: {
+        front: 'Tiendas de Joyería Nativa Americana',
+        back: 'Se pueden encontrar joyas nativas americanas artesanales de turquesa, plata y tradicionales en todo el Viejo Pueblo Histórico. Estas tiendas presentan piezas auténticas de artistas nativos locales y regionales, que representan siglos de artesanía del Suroeste.',
+      },
+      fr: {
+        front: 'Bijouteries Amérindiennes',
+        back: 'Des bijoux amérindiens artisanaux en turquoise, argent et traditionnels peuvent être trouvés dans tout le Vieux Scottsdale historique. Ces magasins présentent des pièces authentiques d\'artistes amérindiens locaux et régionaux, représentant des siècles d\'artisanat du Sud-Ouest.',
+      },
+      de: {
+        front: 'Schmuckgeschäfte der Ureinwohner',
+        back: 'Handgefertigter Türkis-, Silber- und traditioneller Schmuck der Ureinwohner ist im gesamten historischen Alten Scottsdale zu finden. Diese Geschäfte bieten authentische Stücke von lokalen und regionalen Künstlern der Ureinwohner, die Jahrhunderte südwestlicher Handwerkskunst repräsentieren.',
+      },
+    },
+  },
+  {
+    id: 'historic-western-revival-storefronts',
+    translations: {
+      en: {
+        front: 'Historic Western Revival Storefronts',
+        back: "Wood-beamed, low-slung Western Revival buildings from the 1950s–70s preserve the cowboy character that Scottsdale was built on. These buildings are now home to galleries, boutiques, and restaurants, maintaining the area's historic charm.",
+      },
+      es: {
+        front: 'Fachadas del Renacimiento del Oeste Histórico',
+        back: 'Los edificios del Renacimiento del Oeste de los años 1950-70 con vigas de madera y estructura baja preservan el carácter vaquero en el que se construyó Scottsdale. Estos edificios ahora albergan galerías, boutiques y restaurantes, manteniendo el encanto histórico del área.',
+      },
+      fr: {
+        front: 'Façades du Renouveau Western Historique',
+        back: 'Les bâtiments du Renouveau Western des années 1950-70 à poutres en bois et bas de plafond préservent le caractère cowboy sur lequel Scottsdale a été construit. Ces bâtiments abritent maintenant des galeries, des boutiques et des restaurants, maintenant le charme historique de la région.',
+      },
+      de: {
+        front: 'Historische Western-Revival-Fassaden',
+        back: 'Holzbalken, niedrige Western-Revival-Gebäude aus den 1950er-70er Jahren bewahren den Cowboy-Charakter, auf dem Scottsdale aufgebaut wurde. Diese Gebäude beherbergen jetzt Galerien, Boutiquen und Restaurants und bewahren den historischen Charme der Gegend.',
+      },
+    },
+  },
+  // Scottsdale Fashion Square
+  {
+    id: 'fashion-square-nordstrom-neiman',
+    translations: {
+      en: {
+        front: 'Nordstrom & Neiman Marcus',
+        back: "Scottsdale Fashion Square features flagship department stores Nordstrom and Neiman Marcus, offering luxury fashion, beauty, and home goods. These anchor stores have been part of the mall since its major expansion in the 1990s.",
+      },
+      es: {
+        front: 'Nordstrom y Neiman Marcus',
+        back: 'Scottsdale Fashion Square cuenta con las tiendas departamentales insignia Nordstrom y Neiman Marcus, que ofrecen moda de lujo, belleza y artículos para el hogar. Estas tiendas ancla han sido parte del centro comercial desde su gran expansión en la década de 1990.',
+      },
+      fr: {
+        front: 'Nordstrom et Neiman Marcus',
+        back: 'Scottsdale Fashion Square présente les grands magasins phares Nordstrom et Neiman Marcus, offrant mode de luxe, beauté et articles pour la maison. Ces magasins phares font partie du centre commercial depuis son expansion majeure dans les années 1990.',
+      },
+      de: {
+        front: 'Nordstrom & Neiman Marcus',
+        back: 'Scottsdale Fashion Square verfügt über die Flaggschiff-Warenhäuser Nordstrom und Neiman Marcus, die Luxusmode, Beauty und Haushaltswaren anbieten. Diese Ankergeschäfte sind seit der großen Erweiterung des Einkaufszentrums in den 1990er Jahren Teil des Einkaufszentrums.',
+      },
+    },
+  },
+  {
+    id: 'fashion-square-luxury-brands',
+    translations: {
+      en: {
+        front: 'Luxury Brands',
+        back: "The mall houses an impressive collection of luxury retailers including Louis Vuitton, Gucci, Tiffany & Co., Burberry, and Cartier. These flagship stores offer the latest collections from the world's most prestigious fashion houses.",
+      },
+      es: {
+        front: 'Marcas de Lujo',
+        back: 'El centro comercial alberga una impresionante colección de minoristas de lujo, incluyendo Louis Vuitton, Gucci, Tiffany & Co., Burberry y Cartier. Estas tiendas insignia ofrecen las últimas colecciones de las casas de moda más prestigiosas del mundo.',
+      },
+      fr: {
+        front: 'Marques de Luxe',
+        back: 'Le centre commercial abrite une collection impressionnante de détaillants de luxe, notamment Louis Vuitton, Gucci, Tiffany & Co., Burberry et Cartier. Ces magasins phares offrent les dernières collections des maisons de mode les plus prestigieuses au monde.',
+      },
+      de: {
+        front: 'Luxusmarken',
+        back: 'Das Einkaufszentrum beherbergt eine beeindruckende Sammlung von Luxushändlern, darunter Louis Vuitton, Gucci, Tiffany & Co., Burberry und Cartier. Diese Flaggschiff-Geschäfte bieten die neuesten Kollektionen der prestigeträchtigsten Modenhäuser der Welt.',
+      },
+    },
+  },
+  {
+    id: 'fashion-square-apple-store',
+    translations: {
+      en: {
+        front: 'Apple Store',
+        back: "The Apple Store at Fashion Square provides the latest technology products, accessories, and expert support. It's one of the largest Apple retail locations in the Southwest, featuring the full range of Apple devices and services.",
+      },
+      es: {
+        front: 'Tienda Apple',
+        back: 'La Tienda Apple en Fashion Square ofrece los últimos productos tecnológicos, accesorios y soporte experto. Es una de las ubicaciones minoristas de Apple más grandes del Suroeste, con toda la gama de dispositivos y servicios de Apple.',
+      },
+      fr: {
+        front: 'Apple Store',
+        back: 'L\'Apple Store à Fashion Square propose les derniers produits technologiques, accessoires et support expert. C\'est l\'un des plus grands points de vente Apple du Sud-Ouest, avec toute la gamme d\'appareils et services Apple.',
+      },
+      de: {
+        front: 'Apple Store',
+        back: 'Der Apple Store im Fashion Square bietet die neuesten Technologieprodukte, Zubehör und Expertenunterstützung. Es ist einer der größten Apple-Einzelhandelsstandorte im Südwesten mit der vollen Palette von Apple-Geräten und -Dienstleistungen.',
+      },
+    },
+  },
+  {
+    id: 'fashion-square-200-retailers',
+    translations: {
+      en: {
+        front: '200+ Premium Retailers',
+        back: "With over 200 premium retailers, Scottsdale Fashion Square is the largest shopping destination in the Southwest. The mall spans 1.9 million square feet and offers everything from high-end fashion to specialty stores.",
+      },
+      es: {
+        front: 'Más de 200 Minoristas Premium',
+        back: 'Con más de 200 minoristas premium, Scottsdale Fashion Square es el destino de compras más grande del Suroeste. El centro comercial abarca 1.9 millones de pies cuadrados y ofrece todo, desde moda de alta gama hasta tiendas especializadas.',
+      },
+      fr: {
+        front: 'Plus de 200 Détaillants Premium',
+        back: 'Avec plus de 200 détaillants premium, Scottsdale Fashion Square est la plus grande destination shopping du Sud-Ouest. Le centre commercial s\'étend sur 1,9 million de pieds carrés et offre tout, de la mode haut de gamme aux magasins spécialisés.',
+      },
+      de: {
+        front: '200+ Premium-Einzelhändler',
+        back: 'Mit über 200 Premium-Einzelhändlern ist Scottsdale Fashion Square das größte Einkaufsziel im Südwesten. Das Einkaufszentrum erstreckt sich über 1,9 Millionen Quadratfuß und bietet alles von High-End-Mode bis zu Fachgeschäften.',
+      },
+    },
+  },
+  {
+    id: 'fashion-square-fine-dining',
+    translations: {
+      en: {
+        front: 'Fine Dining Restaurants',
+        back: "Fashion Square features several fine dining restaurants offering sophisticated cuisine in elegant settings. These restaurants provide a perfect complement to a day of luxury shopping, with menus crafted by renowned chefs.",
+      },
+      es: {
+        front: 'Restaurantes de Alta Cocina',
+        back: 'Fashion Square cuenta con varios restaurantes de alta cocina que ofrecen cocina sofisticada en entornos elegantes. Estos restaurantes son el complemento perfecto para un día de compras de lujo, con menús creados por chefs reconocidos.',
+      },
+      fr: {
+        front: 'Restaurants Gastronomiques',
+        back: 'Fashion Square propose plusieurs restaurants gastronomiques offrant une cuisine sophistiquée dans des cadres élégants. Ces restaurants sont le complément parfait à une journée de shopping de luxe, avec des menus créés par des chefs renommés.',
+      },
+      de: {
+        front: 'Feinschmecker-Restaurants',
+        back: 'Fashion Square verfügt über mehrere Feinschmecker-Restaurants, die raffinierte Küche in eleganten Umgebungen anbieten. Diese Restaurants sind die perfekte Ergänzung zu einem Tag mit Luxus-Einkäufen, mit Menüs von renommierten Köchen.',
+      },
+    },
+  },
+  {
+    id: 'fashion-square-luxury-cinema',
+    translations: {
+      en: {
+        front: 'Luxury Cinema',
+        back: "The mall includes a luxury cinema with premium seating, enhanced sound systems, and gourmet concessions. It's the perfect place to catch the latest films in comfort and style after a day of shopping.",
+      },
+      es: {
+        front: 'Cine de Lujo',
+        back: 'El centro comercial incluye un cine de lujo con asientos premium, sistemas de sonido mejorados y concesiones gourmet. Es el lugar perfecto para ver las últimas películas con comodidad y estilo después de un día de compras.',
+      },
+      fr: {
+        front: 'Cinéma de Luxe',
+        back: 'Le centre commercial comprend un cinéma de luxe avec des sièges premium, des systèmes sonores améliorés et des concessions gastronomiques. C\'est l\'endroit parfait pour voir les derniers films dans le confort et le style après une journée de shopping.',
+      },
+      de: {
+        front: 'Luxus-Kino',
+        back: 'Das Einkaufszentrum verfügt über ein Luxus-Kino mit Premium-Sitzen, verbesserten Soundsystemen und Gourmet-Konzessionen. Es ist der perfekte Ort, um die neuesten Filme in Komfort und Stil nach einem Einkaufstag zu sehen.',
+      },
+    },
+  },
+  {
+    id: 'fashion-square-casual-dining',
+    translations: {
+      en: {
+        front: 'Multiple Casual Dining Options',
+        back: "In addition to fine dining, Fashion Square offers numerous casual dining options ranging from quick-service restaurants to sit-down cafes. There's something to satisfy every taste and budget.",
+      },
+      es: {
+        front: 'Múltiples Opciones de Comida Casual',
+        back: 'Además de la alta cocina, Fashion Square ofrece numerosas opciones de comida casual, desde restaurantes de servicio rápido hasta cafeterías. Hay algo para satisfacer todos los gustos y presupuestos.',
+      },
+      fr: {
+        front: 'Plusieurs Options de Restauration Décontractée',
+        back: 'En plus de la gastronomie, Fashion Square propose de nombreuses options de restauration décontractée, des restaurants à service rapide aux cafés assis. Il y a quelque chose pour satisfaire tous les goûts et budgets.',
+      },
+      de: {
+        front: 'Mehrere Optionen für Casual Dining',
+        back: 'Neben Feinschmecker-Restaurants bietet Fashion Square zahlreiche Optionen für Casual Dining, von Schnellrestaurants bis hin zu Sitzcafés. Es gibt etwas für jeden Geschmack und jedes Budget.',
+      },
+    },
+  },
+  {
+    id: 'fashion-square-location',
+    translations: {
+      en: {
+        front: 'Fashion Square Location',
+        back: "Located at 7014 E Camelback Rd, Scottsdale Fashion Square is easily accessible from Old Town, just a short drive or ride away. The mall's central location makes it a convenient destination for visitors exploring the area.",
+      },
+      es: {
+        front: 'Ubicación de Fashion Square',
+        back: 'Ubicado en 7014 E Camelback Rd, Scottsdale Fashion Square es fácilmente accesible desde el Viejo Pueblo, a solo un corto viaje en auto. La ubicación central del centro comercial lo convierte en un destino conveniente para los visitantes que exploran el área.',
+      },
+      fr: {
+        front: 'Emplacement de Fashion Square',
+        back: 'Situé au 7014 E Camelback Rd, Scottsdale Fashion Square est facilement accessible depuis le Vieux Scottsdale, à seulement un court trajet en voiture. L\'emplacement central du centre commercial en fait une destination pratique pour les visiteurs explorant la région.',
+      },
+      de: {
+        front: 'Standort Fashion Square',
+        back: 'Gelegen an der 7014 E Camelback Rd, ist Scottsdale Fashion Square leicht vom Alten Scottsdale aus erreichbar, nur eine kurze Fahrt entfernt. Die zentrale Lage des Einkaufszentrums macht es zu einem bequemen Ziel für Besucher, die die Gegend erkunden.',
+      },
+    },
+  },
 ];
 
 /**
