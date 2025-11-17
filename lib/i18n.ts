@@ -49,6 +49,11 @@ export const UI_TRANSLATIONS: Record<Language, Record<string, string>> = {
     'install.description.android': 'Add to your home screen for offline access',
     'install.button': 'Install',
     'install.later': 'Later',
+    'search.label': 'Search cards',
+    'search.placeholder': 'Search...',
+    'search.clear': 'Clear search',
+    'search.noResults': 'No cards found',
+    'search.results': '{{count}} result(s)',
   },
   es: {
     'app.title': 'Destacados del Viejo Pueblo de Scottsdale',
@@ -73,6 +78,11 @@ export const UI_TRANSLATIONS: Record<Language, Record<string, string>> = {
     'install.description.android': 'Agrega a tu pantalla de inicio para acceso sin conexión',
     'install.button': 'Instalar',
     'install.later': 'Después',
+    'search.label': 'Buscar tarjetas',
+    'search.placeholder': 'Buscar...',
+    'search.clear': 'Limpiar búsqueda',
+    'search.noResults': 'No se encontraron tarjetas',
+    'search.results': '{{count}} resultado(s)',
   },
   fr: {
     'app.title': 'Points Forts du Vieux Scottsdale',
@@ -97,6 +107,11 @@ export const UI_TRANSLATIONS: Record<Language, Record<string, string>> = {
     'install.description.android': 'Ajoutez à votre écran d\'accueil pour un accès hors ligne',
     'install.button': 'Installer',
     'install.later': 'Plus Tard',
+    'search.label': 'Rechercher des cartes',
+    'search.placeholder': 'Rechercher...',
+    'search.clear': 'Effacer la recherche',
+    'search.noResults': 'Aucune carte trouvée',
+    'search.results': '{{count}} résultat(s)',
   },
   de: {
     'app.title': 'Highlights des Alten Scottsdale',
@@ -121,6 +136,11 @@ export const UI_TRANSLATIONS: Record<Language, Record<string, string>> = {
     'install.description.android': 'Zum Home-Bildschirm hinzufügen für Offline-Zugriff',
     'install.button': 'Installieren',
     'install.later': 'Später',
+    'search.label': 'Karten durchsuchen',
+    'search.placeholder': 'Suchen...',
+    'search.clear': 'Suche löschen',
+    'search.noResults': 'Keine Karten gefunden',
+    'search.results': '{{count}} Ergebnis(se)',
   },
 };
 

@@ -442,9 +442,6 @@ export function createFrontToIdMap(): Map<string, string> {
   }
   return map;
 }
-  translations: {
-    en: {
-      front: 'Old Town Holiday Arch',
       back: "A festive installation welcoming visitors each winter, the Holiday Arch has become one of Old Town's most iconic seasonal landmarks. Standing 20 feet tall, it's made of thousands of LED lights.",
     },
     es: {

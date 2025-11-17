@@ -17,6 +17,8 @@ import { LanguageSelect } from '@/components/LanguageSelect';
 import { Controls } from '@/components/Controls';
 import { getFavoritedCards, isFavorited, toggleFavorite as toggleFavoriteUtil } from '@/lib/favorites';
 import { getLanguagePreference, setLanguagePreference, t, type Language } from '@/lib/i18n';
+import { fuzzySearch } from '@/lib/search';
+import { SearchInput } from '@/components/SearchInput';
 
 // Lazy load modals for code splitting
 const ReviewPrompt = lazy(() => import('@/components/ReviewPrompt').then((mod) => ({ default: mod.ReviewPrompt })));
@@ -30,13 +32,36 @@ export default function HomePage() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [showReviewPrompt, setShowReviewPrompt] = useState(false);
   const [language, setLanguage] = useState<Language>(getLanguagePreference());
+  const [searchQuery, setSearchQuery] = useState('');
   const startRef = useRef<{ x: number; y: number } | null>(null);
   const movedRef = useRef(false);
 
   // Get translated deck based on current language
-  const currentDeck = useMemo(() => getTranslatedDeck(baseDeck, language), [baseDeck, language]);
+  const baseTranslatedDeck = useMemo(() => getTranslatedDeck(baseDeck, language), [baseDeck, language]);
+  
+  // Apply search filter if query exists
+  const currentDeck = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return baseTranslatedDeck;
+    }
+    const filteredCards = fuzzySearch(baseTranslatedDeck.cards, searchQuery);
+    return {
+      ...baseTranslatedDeck,
+      cards: filteredCards,
+    };
+  }, [baseTranslatedDeck, searchQuery]);
+  
   const hasCards = currentDeck.cards.length > 0;
   const current: Card | null = hasCards ? currentDeck.cards[index] : null;
+  
+  // Reset index when search results change
+  useEffect(() => {
+    if (index >= currentDeck.cards.length && currentDeck.cards.length > 0) {
+      setIndex(0);
+    } else if (currentDeck.cards.length === 0) {
+      setIndex(0);
+    }
+  }, [currentDeck.cards.length, index]);
 
   const flip = useCallback(() => setFlipped((f) => !f), []);
   
@@ -52,6 +77,7 @@ export default function HomePage() {
   }, [hasCards, currentDeck.cards.length]);
 
   const setDeckById = useCallback((id: string) => {
+    setSearchQuery(''); // Clear search when changing decks
       if (id === 'favorites') {
         const allCards = getAllDeck().cards;
         const favoritedCards = getFavoritedCards(allCards);
@@ -348,15 +374,29 @@ export default function HomePage() {
                 <img src="/logo.svg" alt={BRAND.company} className="h-24 sm:h-28 md:h-32" />
               </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold m-0 leading-tight">{t('app.title', language)}</h1>
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onClear={() => setSearchQuery('')}
+            language={language}
+          />
           <div className="flex gap-2 sm:gap-3 items-center justify-between">
-            <DeckSelect options={deckOptions} value={currentDeck.id} onChange={setDeckById} />
+            <DeckSelect options={deckOptions} value={baseDeck.id} onChange={setDeckById} />
             <div className="flex gap-2 items-center">
               <LanguageSelect value={language} onChange={handleLanguageChange} />
               <span className="text-sm sm:text-base md:text-lg text-muted whitespace-nowrap" aria-live="polite">
                 {hasCards ? `${index + 1} / ${currentDeck.cards.length}` : '0 / 0'}
+                {searchQuery.trim() && currentDeck.cards.length > 0 && (
+                  <span className="ml-2 text-xs">({t('search.results', language).replace('{{count}}', String(currentDeck.cards.length))})</span>
+                )}
               </span>
             </div>
           </div>
+          {searchQuery.trim() && currentDeck.cards.length === 0 && (
+            <div className="text-center text-muted text-sm sm:text-base py-4">
+              {t('search.noResults', language)}
+            </div>
+          )}
         </header>
 
           <div className="flex-1 flex items-center justify-center">
