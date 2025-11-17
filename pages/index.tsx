@@ -418,6 +418,13 @@ export default function HomePage() {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Scottsdale Tours" />
+        
+        {/* Performance: Resource hints */}
+        <link rel="preconnect" href="https://api.qrserver.com" />
+        <link rel="dns-prefetch" href="https://api.qrserver.com" />
+        
+        {/* Performance: Preload critical resources */}
+        <link rel="preload" href="/logo.svg" as="image" type="image/svg+xml" />
       </Head>
       <div
         className="min-h-full max-w-[600px] mx-auto px-3 sm:px-4 pt-[max(env(safe-area-inset-top),8px)] pb-[max(calc(10px+env(safe-area-inset-bottom)),16px)] flex flex-col gap-2 sm:gap-3"
