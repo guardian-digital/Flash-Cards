@@ -19,6 +19,7 @@ import { getFavoritedCards, isFavorited, toggleFavorite as toggleFavoriteUtil } 
 import { getLanguagePreference, setLanguagePreference, t, type Language } from '@/lib/i18n';
 import { fuzzySearch } from '@/lib/search';
 import { SearchInput } from '@/components/SearchInput';
+import { trackDeckSelection, trackCardView, trackNarrationToggle, trackSearch, trackFavoriteToggle } from '@/lib/analytics';
 
 // Lazy load modals for code splitting
 const ReviewPrompt = lazy(() => import('@/components/ReviewPrompt').then((mod) => ({ default: mod.ReviewPrompt })));
@@ -62,6 +63,13 @@ export default function HomePage() {
       setIndex(0);
     }
   }, [currentDeck.cards.length, index]);
+  
+  // Track card view
+  useEffect(() => {
+    if (current && hasCards) {
+      trackCardView(currentDeck.id, index);
+    }
+  }, [current, index, currentDeck.id, hasCards]);
 
   const flip = useCallback(() => setFlipped((f) => !f), []);
   
@@ -118,6 +126,7 @@ export default function HomePage() {
   const toggleFavorite = useCallback(() => {
     if (!current) return;
     const newFavorited = toggleFavoriteUtil(current);
+    trackFavoriteToggle(current.front, newFavorited);
     
     // Update favorites state
     const newFavorites = new Set(favorites);
