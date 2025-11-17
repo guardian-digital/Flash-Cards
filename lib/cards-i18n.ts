@@ -442,16 +442,6 @@ export function createFrontToIdMap(): Map<string, string> {
   }
   return map;
 }
-      back: 'Des dizaines d\'arbres illuminés pour les fêtes transforment ce parc en une promenade lumineuse pendant la saison des fêtes. La tradition a commencé en 1985 avec seulement 12 arbres et en compte plus de 100 aujourd\'hui.',
-    },
-    de: {
-      front: 'Bürgerzentrum Baumspaziergang',
-      back: 'Dutzende von festlich beleuchteten Bäumen verwandeln diesen Park während der Feiertagszeit in eine leuchtende Promenade. Die Tradition begann 1985 mit nur 12 Bäumen und ist heute auf über 100 angewachsen.',
-    },
-  },
-},
-{
-  id: 'old-town-holiday-arch',
   translations: {
     en: {
       front: 'Old Town Holiday Arch',
