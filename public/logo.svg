@@ -1,4 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" width="200" height="120">
+  <!-- Black background to match design -->
+  <rect width="200" height="120" fill="#0B0B0C"/>
   <!-- Circular logo container -->
   <g transform="translate(100, 40)">
     <!-- Circle outline (light brown/rose gold) -->
