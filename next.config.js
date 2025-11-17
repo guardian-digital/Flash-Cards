@@ -69,6 +69,8 @@ const nextConfig = {
         runtimeChunk: 'single',
         splitChunks: {
           chunks: 'all',
+          maxInitialRequests: 25,
+          minSize: 20000,
           cacheGroups: {
             default: false,
             vendors: false,
@@ -78,6 +80,7 @@ const nextConfig = {
               chunks: 'all',
               test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
               priority: 20,
+              enforce: true,
             },
             // Common chunk for shared code
             common: {
@@ -86,6 +89,14 @@ const nextConfig = {
               chunks: 'all',
               priority: 10,
               reuseExistingChunk: true,
+            },
+            // Separate chunk for large libraries
+            lib: {
+              name: 'lib',
+              test: /[\\/]lib[\\/]/,
+              chunks: 'all',
+              priority: 15,
+              minChunks: 1,
             },
           },
         },

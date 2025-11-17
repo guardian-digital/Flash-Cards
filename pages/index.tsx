@@ -12,6 +12,7 @@ import { BRAND } from '@/config/brand';
 import { DECKS, getAllDeck, type Card, type Deck } from '@/lib/data';
 import { getTranslatedDeck, getTranslatedCard } from '@/lib/data-i18n';
 import { FlashCard } from '@/components/FlashCard';
+import { LoadingCard } from '@/components/LoadingCard';
 import { DeckSelect } from '@/components/DeckSelect';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { Controls } from '@/components/Controls';
@@ -26,6 +27,17 @@ import { parseShareUrl, generateShareUrl } from '@/lib/share';
 const ReviewPrompt = lazy(() => import('@/components/ReviewPrompt').then((mod) => ({ default: mod.ReviewPrompt })));
 const InstallPrompt = lazy(() => import('@/components/InstallPrompt').then((mod) => ({ default: mod.InstallPrompt })));
 const ShareModal = lazy(() => import('@/components/ShareModal').then((mod) => ({ default: mod.ShareModal })));
+
+// Loading skeleton component for better perceived performance
+function LoadingSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <div className="h-8 bg-surface/50 rounded w-3/4 mb-4"></div>
+      <div className="h-4 bg-surface/50 rounded w-full mb-2"></div>
+      <div className="h-4 bg-surface/50 rounded w-5/6"></div>
+    </div>
+  );
+}
 
 export default function HomePage() {
   const [baseDeck, setBaseDeck] = useState<Deck>(getAllDeck());
@@ -454,6 +466,8 @@ export default function HomePage() {
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
               />
+            ) : hasCards ? (
+              <LoadingCard />
             ) : (
               <div className="text-muted">No cards</div>
             )}

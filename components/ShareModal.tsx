@@ -7,7 +7,7 @@
  * PROPRIETARY - Unauthorized use prohibited.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BRAND } from '@/config/brand';
 import { t, type Language } from '@/lib/i18n';
 import { generateShareUrl, copyToClipboard } from '@/lib/share';
@@ -22,8 +22,17 @@ type ShareModalProps = {
 
 export function ShareModal({ deckId, cardIndex, cardFront, onClose, language = 'en' }: ShareModalProps) {
   const [copied, setCopied] = useState(false);
+  const [qrCodeLoaded, setQrCodeLoaded] = useState(false);
   const shareUrl = generateShareUrl(deckId, cardIndex, language);
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=2&data=${encodeURIComponent(shareUrl)}`;
+  
+  // Preload QR code image when modal opens
+  useEffect(() => {
+    const img = new Image();
+    img.src = qrCodeUrl;
+    img.onload = () => setQrCodeLoaded(true);
+    img.onerror = () => setQrCodeLoaded(false);
+  }, [qrCodeUrl]);
 
   const handleCopy = async () => {
     const success = await copyToClipboard(shareUrl);
@@ -71,19 +80,24 @@ export function ShareModal({ deckId, cardIndex, cardFront, onClose, language = '
 
         <div className="flex flex-col items-center gap-4 mb-6">
           <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-            <img
-              src={qrCodeUrl}
-              alt={t('share.qr.alt', language)}
-              className="w-48 h-48 sm:w-56 sm:h-56"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                const parent = target.parentElement;
-                if (parent) {
-                  parent.innerHTML = `<p class="text-sm text-muted">${t('share.qr.error', language)}</p>`;
-                }
-              }}
-            />
+            {!qrCodeLoaded ? (
+              <div className="w-48 h-48 sm:w-56 sm:h-56 bg-gray-200 animate-pulse rounded"></div>
+            ) : (
+              <img
+                src={qrCodeUrl}
+                alt={t('share.qr.alt', language)}
+                className="w-48 h-48 sm:w-56 sm:h-56"
+                loading="lazy"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const parent = target.parentElement;
+                  if (parent) {
+                    parent.innerHTML = `<p class="text-sm text-muted">${t('share.qr.error', language)}</p>`;
+                  }
+                }}
+              />
+            )}
           </div>
           <p className="text-xs text-muted text-center -mt-2">
             {t('share.qr.scan', language)}
