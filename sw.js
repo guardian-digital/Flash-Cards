@@ -7,8 +7,8 @@
  * PROPRIETARY - Unauthorized use prohibited.
  */
 
-const CACHE_NAME = 'scottsdale-tours-v1';
-const RUNTIME_CACHE = 'scottsdale-tours-runtime-v1';
+const CACHE_NAME = 'scottsdale-tours-v2';
+const RUNTIME_CACHE = 'scottsdale-tours-runtime-v2';
 
 // Assets to cache on install
 const STATIC_ASSETS = [
