@@ -12,8 +12,10 @@ import { BRAND } from '@/config/brand';
 import { DECKS, getAllDeck, type Card, type Deck } from '@/lib/data';
 import { FlashCard } from '@/components/FlashCard';
 import { DeckSelect } from '@/components/DeckSelect';
+import { LanguageSelect } from '@/components/LanguageSelect';
 import { Controls } from '@/components/Controls';
 import { getFavoritedCards, isFavorited, toggleFavorite as toggleFavoriteUtil } from '@/lib/favorites';
+import { getLanguagePreference, setLanguagePreference, t, type Language } from '@/lib/i18n';
 
 // Lazy load modals for code splitting
 const ReviewPrompt = lazy(() => import('@/components/ReviewPrompt').then((mod) => ({ default: mod.ReviewPrompt })));
@@ -26,6 +28,7 @@ export default function HomePage() {
   const [narrationEnabled, setNarrationEnabled] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [showReviewPrompt, setShowReviewPrompt] = useState(false);
+  const [language, setLanguage] = useState<Language>(getLanguagePreference());
   const startRef = useRef<{ x: number; y: number } | null>(null);
   const movedRef = useRef(false);
 
@@ -46,10 +49,10 @@ export default function HomePage() {
   }, [hasCards, currentDeck.cards.length]);
 
   const setDeckById = useCallback((id: string) => {
-    if (id === 'favorites') {
-      const allCards = getAllDeck().cards;
-      const favoritedCards = getFavoritedCards(allCards);
-      setCurrentDeck({ id: 'favorites', label: '⭐ Favorites', cards: favoritedCards });
+      if (id === 'favorites') {
+        const allCards = getAllDeck().cards;
+        const favoritedCards = getFavoritedCards(allCards);
+        setCurrentDeck({ id: 'favorites', label: t('deck.favorites', language), cards: favoritedCards });
     } else {
       const found = id === 'all' ? getAllDeck() : DECKS.find((d) => d.id === id) || getAllDeck();
       setCurrentDeck(found);
@@ -267,13 +270,18 @@ export default function HomePage() {
   }, [next, prev]);
 
 
+  const handleLanguageChange = useCallback((lang: Language) => {
+    setLanguage(lang);
+    setLanguagePreference(lang);
+  }, []);
+
   const deckOptions = useMemo(
     () => [
-      { id: 'all', label: 'All Highlights' },
-      { id: 'favorites', label: '⭐ Favorites' },
+      { id: 'all', label: t('deck.all', language) },
+      { id: 'favorites', label: t('deck.favorites', language) },
       ...DECKS.map((d) => ({ id: d.id, label: d.label })),
     ],
-    []
+    [language]
   );
 
   return (
@@ -299,12 +307,15 @@ export default function HomePage() {
           <div className="flex justify-center mb-2">
             <img src="/logo.svg" alt={BRAND.company} className="h-12 sm:h-14 md:h-16" />
           </div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold m-0 leading-tight">Old Town Scottsdale Highlights</h1>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold m-0 leading-tight">{t('app.title', language)}</h1>
           <div className="flex gap-2 sm:gap-3 items-center justify-between">
             <DeckSelect options={deckOptions} value={currentDeck.id} onChange={setDeckById} />
-            <span className="text-sm sm:text-base md:text-lg text-muted whitespace-nowrap" aria-live="polite">
-              {hasCards ? `${index + 1} / ${currentDeck.cards.length}` : '0 / 0'}
-            </span>
+            <div className="flex gap-2 items-center">
+              <LanguageSelect value={language} onChange={handleLanguageChange} />
+              <span className="text-sm sm:text-base md:text-lg text-muted whitespace-nowrap" aria-live="polite">
+                {hasCards ? `${index + 1} / ${currentDeck.cards.length}` : '0 / 0'}
+              </span>
+            </div>
           </div>
         </header>
 
@@ -336,25 +347,26 @@ export default function HomePage() {
           onFlip={flip}
           onToggleVoice={toggleVoice}
           narrationEnabled={narrationEnabled}
+          language={language}
         />
           <div className="text-center text-muted text-xs sm:text-sm mt-1 sm:mt-2 px-2">
-            <span className="sm:hidden">Tap to flip • Swipe left/right to change cards</span>
-            <span className="hidden sm:inline">Tap card to flip • Swipe or use arrows to change cards</span>
+            <span className="sm:hidden">{t('hint.mobile', language)}</span>
+            <span className="hidden sm:inline">{t('hint.desktop', language)}</span>
           </div>
           <footer className="text-center text-muted text-xs mt-2 sm:mt-3 flex flex-col gap-2">
-            <div>{BRAND.company}</div>
+            <div>{t('footer.company', language)}</div>
             <button
               type="button"
               onClick={() => setShowReviewPrompt(true)}
               className="text-accent hover:text-accent-hover transition-colors text-xs underline"
-              aria-label="Leave a review"
+              aria-label={t('button.review', language)}
             >
-              Leave a Review
+              {t('button.review', language)}
             </button>
             </footer>
             {showReviewPrompt && (
               <Suspense fallback={null}>
-                <ReviewPrompt onClose={() => setShowReviewPrompt(false)} />
+                <ReviewPrompt onClose={() => setShowReviewPrompt(false)} language={language} />
               </Suspense>
             )}
             <Suspense fallback={null}>
