@@ -4,7 +4,6 @@ const nextConfig = {
   compiler: { styledComponents: false },
   
   // Performance optimizations
-  swcMinify: true,
   compress: true,
   
   // Optimize images
@@ -15,9 +14,10 @@ const nextConfig = {
   },
   
   // Bundle optimization
-  experimental: {
-    optimizeCss: true,
-  },
+  // Note: optimizeCss requires 'critters' package - disabled for now
+  // experimental: {
+  //   optimizeCss: true,
+  // },
   
   // PWA configuration
   async headers() {
@@ -56,7 +56,10 @@ const nextConfig = {
     ];
   },
   
-  // Webpack optimizations for better code splitting
+  // Turbopack configuration (Next.js 16+)
+  turbopack: {},
+  
+  // Webpack optimizations for better code splitting (fallback for non-Turbopack builds)
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
       // Production optimizations

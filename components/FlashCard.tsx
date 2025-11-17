@@ -15,6 +15,9 @@ type FlashCardProps = {
   onFlip: () => void;
   isFavorited?: boolean;
   onToggleFavorite?: () => void;
+  onTouchStart?: (e: React.TouchEvent) => void;
+  onTouchMove?: (e: React.TouchEvent) => void;
+  onTouchEnd?: (e: React.TouchEvent) => void;
 };
 
 export function FlashCard({ 
