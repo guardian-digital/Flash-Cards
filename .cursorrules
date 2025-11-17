@@ -1,0 +1,53 @@
+# Flash-Cards — Cursor AI Rules
+
+## Onboarding Protocol
+
+When a new agent starts, they must follow the five-step onboarding protocol:
+
+1. **Read `!!! START HERE - READ FIRST.md`** (root directory)
+2. **Read `docs/AGENT_ONBOARDING_PROTOCOL.md`** for complete onboarding
+3. **Check `docs/AGENT_STATUS.md`** for current project status
+4. **Review `docs/Standards.md`** for coding and design standards
+5. **Run `pnpm install && pnpm dev`** to get the app running
+
+## Agent Handoff
+
+At the end of each session, run:
+```bash
+pnpm run handoff:generate
+```
+
+This updates `docs/AGENT_STATUS.md` with current context for the next agent.
+
+## Project Context
+
+- **Dual Deployment**: Next.js app (`pages/`, `components/`) + single-file GitHub Pages (`index.html`, `app.js`)
+- **Brand**: Scottsdale Cart Tours — use `BRAND` tokens from `config/brand.ts`
+- **Design**: Minimalist, luxury-brand aesthetic; no emojis; accessible; responsive
+- **Audio**: Pre-generated MP3s in `audio/` with SpeechSynthesis fallback
+- **Data Sync**: After changing `lib/data.ts`, run `node scripts/sync-decks.js`
+
+## Code Standards
+
+- TypeScript-first: no `any`, explicit function signatures
+- Components: PascalCase in `components/`
+- Styling: Tailwind utility classes, use `BRAND` tokens
+- Accessibility: Semantic HTML, ARIA attributes, keyboard navigation
+- Imports: ES modules with `@/` aliases
+- Error handling: Graceful fallbacks, user-friendly states
+
+## Testing
+
+- Unit tests: `pnpm test` (Jest)
+- E2E tests: `pnpm test:e2e` (Playwright)
+- All tests: `pnpm test:all`
+- Code quality: `pnpm lint`, `pnpm type-check`
+
+## Important Reminders
+
+- Always check both Next.js and single-file versions when making changes
+- Keep `index.html` and `app.js` in sync with React components
+- Use `BRAND` constants for all colors, typography, radii, shadows
+- Mobile-first: All UI must be responsive and touch-optimized
+- Run `pnpm run handoff:generate` before ending your session
+

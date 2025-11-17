@@ -35,12 +35,15 @@ pnpm test:all          # Run all tests
 ```
 
 ### Documentation
-- `docs/Onboarding.md` — quick start for new agents
-- `docs/Standards.md` — coding, design, and review standards
-- `docs/PRD.md` — requirements & roadmap
-- `docs/SECURITY.md` — security implementation notes
-- `SECURITY.md` — security policy and vulnerability reporting
-- `CONTRIBUTING.md` — branches, commits, PR workflow
+- **`!!! START HERE - READ FIRST.md`** — **Start here!** Entry point for new agents
+- `docs/AGENT_ONBOARDING_PROTOCOL.md` — Complete onboarding guide (5-step protocol)
+- `docs/AGENT_STATUS.md` — Current project status (auto-generated, run `pnpm run handoff:generate`)
+- `docs/Onboarding.md` — Quick start reference
+- `docs/Standards.md` — Coding, design, and review standards
+- `docs/PRD.md` — Requirements & roadmap
+- `docs/SECURITY.md` — Security implementation notes
+- `SECURITY.md` — Security policy and vulnerability reporting
+- `CONTRIBUTING.md` — Branches, commits, PR workflow
 
 ### Brand Tokens
 Use `config/brand.ts` for colors, typography, radii, shadows.
