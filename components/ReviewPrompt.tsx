@@ -6,7 +6,6 @@
  * PROPRIETARY - Unauthorized use prohibited.
  */
 
-import { useState } from 'react';
 import { BRAND } from '@/config/brand';
 
 const GOOGLE_REVIEWS_URL = 'https://g.page/r/CXN08ldPlfATEBM/review';
@@ -16,9 +15,7 @@ type ReviewPromptProps = {
 };
 
 export function ReviewPrompt({ onClose }: ReviewPromptProps) {
-  const [showQR, setShowQR] = useState(false);
-
-  // Generate QR code using a simple API (qrcode.tec-it.com or similar)
+  // Generate QR code using QR Server API
   // For production, consider using a library like 'qrcode.react' or 'react-qr-code'
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(GOOGLE_REVIEWS_URL)}`;
 
@@ -65,7 +62,6 @@ export function ReviewPrompt({ onClose }: ReviewPromptProps) {
                 // Fallback if QR code fails to load
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
-                setShowQR(false);
               }}
             />
           </div>
