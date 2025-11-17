@@ -297,6 +297,11 @@ var deckSelect=document.getElementById('deckSelect');
 var pagerEl=document.getElementById('pager');
 var cardEl=document.getElementById('card');
 var frontDeckLabel=document.getElementById('frontDeckLabel');
+var searchInput=document.getElementById('searchInput');
+var searchClear=document.getElementById('searchClear');
+var searchIcon=document.getElementById('searchIcon');
+var searchResults=document.getElementById('searchResults');
+var noResults=document.getElementById('noResults');
 var frontTitleEl=document.getElementById('frontTitle');
 var backTitleEl=document.getElementById('backTitle');
 var backTextEl=document.getElementById('backText');
@@ -310,6 +315,8 @@ var hzFlip=document.getElementById('hzFlip');
 
 // State
 var currentDeck=allDeck;
+var baseDeck=allDeck;
+var searchQuery='';
 var index=0; var flipped=false;
 var narrationEnabled=false;
 

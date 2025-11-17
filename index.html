@@ -79,6 +79,23 @@
     @media (min-width:640px){ #deckSelect{font-size:16px;padding:12px 40px 12px 14px;background-position:right 14px center;} }
     @media (min-width:768px){ #deckSelect{font-size:18px;} }
     #deckSelect option{background:var(--card);color:var(--fg);padding:8px;}
+    #searchInput{width:100%;background:var(--card);color:var(--fg);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 40px 10px 12px;font-size:14px;appearance:none;-webkit-appearance:none;-moz-appearance:none;min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;margin-bottom:8px;}
+    @media (min-width:640px){ #searchInput{font-size:16px;padding:12px 44px 12px 14px;margin-bottom:10px;} }
+    @media (min-width:768px){ #searchInput{font-size:18px;} }
+    #searchInput:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(242,181,124,0.2);}
+    #searchInput::placeholder{color:rgba(184,184,191,0.6);}
+    .search-wrapper{position:relative;width:100%;}
+    .search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;display:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+    @media (min-width:640px){ .search-clear{right:14px;} }
+    .search-clear.visible{display:block;}
+    .search-clear:hover{color:var(--fg);}
+    .search-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(184,184,191,0.6);}
+    @media (min-width:640px){ .search-icon{right:14px;} }
+    .search-icon.hidden{display:none;}
+    .search-results{font-size:12px;color:var(--muted);margin-left:8px;}
+    @media (min-width:640px){ .search-results{font-size:14px;} }
+    .no-results{text-align:center;color:var(--muted);font-size:14px;padding:16px 0;}
+    @media (min-width:640px){ .no-results{font-size:16px;} }
     .mobile-text{display:inline;}
     .desktop-text{display:none;}
     @media (min-width:640px){ .mobile-text{display:none;} .desktop-text{display:inline;} }
@@ -105,11 +122,27 @@
     <header>
       <div style="display:flex;justify-content:center;margin-bottom:8px;"><img src="logo.svg" alt="Scottsdale Cart Tours" style="height:48px;" /></div>
       <h1>Old Town Scottsdale Highlights</h1>
+      <div class="search-wrapper">
+        <input type="search" id="searchInput" placeholder="Search..." aria-label="Search cards" />
+        <button class="search-clear" id="searchClear" aria-label="Clear search" style="display:none;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <div class="search-icon" id="searchIcon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </div>
+      </div>
       <div class="meta-line">
         <select id="deckSelect" aria-label="Choose deck">
         </select>
-        <span class="pager" id="pager">1 / 1</span>
+        <span class="pager" id="pager">1 / 1<span class="search-results" id="searchResults" style="display:none;"></span></span>
       </div>
+      <div class="no-results" id="noResults" style="display:none;">No cards found</div>
     </header>
     <div class="card-wrap">
       <article class="card" id="card" role="button" aria-pressed="false" tabindex="0" aria-label="Flashcard. Tap to flip.">
