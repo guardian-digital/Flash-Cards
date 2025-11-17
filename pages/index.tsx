@@ -253,7 +253,8 @@ export default function HomePage() {
           narrationEnabled={narrationEnabled}
         />
           <div className="text-center text-muted text-xs sm:text-sm mt-1 sm:mt-2 px-2">
-            Tap card to flip • Swipe or use arrows to change cards
+            <span className="sm:hidden">Tap to flip • Swipe left/right to change cards</span>
+            <span className="hidden sm:inline">Tap card to flip • Swipe or use arrows to change cards</span>
           </div>
           <footer className="text-center text-muted text-xs mt-2 sm:mt-3">
             {BRAND.company}

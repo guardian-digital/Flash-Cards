@@ -17,10 +17,11 @@ export function Controls({
     <div className="flex flex-col sm:flex-row gap-2 sm:gap-2 mt-2" aria-label="Card controls">
       {/* Primary navigation row */}
       <div className="flex gap-2">
+        {/* Hide prev/next buttons on mobile - use swipe gestures instead */}
         <button
           type="button"
           aria-label="Previous card"
-          className="flex-1 min-h-[48px] sm:min-h-[52px] md:min-h-[60px] rounded-full border border-white/20 bg-transparent text-sm sm:text-base md:text-lg text-white touch-manipulation active:opacity-70"
+          className="hidden sm:flex flex-1 min-h-[48px] sm:min-h-[52px] md:min-h-[60px] rounded-full border border-white/20 bg-transparent text-sm sm:text-base md:text-lg text-white touch-manipulation active:opacity-70"
           onClick={onPrev}
         >
           ◀ Prev
@@ -33,10 +34,11 @@ export function Controls({
         >
           Flip
         </button>
+        {/* Hide prev/next buttons on mobile - use swipe gestures instead */}
         <button
           type="button"
           aria-label="Next card"
-          className="flex-1 min-h-[48px] sm:min-h-[52px] md:min-h-[60px] rounded-full border border-white/20 bg-transparent text-sm sm:text-base md:text-lg text-white touch-manipulation active:opacity-70"
+          className="hidden sm:flex flex-1 min-h-[48px] sm:min-h-[52px] md:min-h-[60px] rounded-full border border-white/20 bg-transparent text-sm sm:text-base md:text-lg text-white touch-manipulation active:opacity-70"
           onClick={onNext}
         >
           Next ▶
