@@ -309,6 +309,13 @@ var prevBtn=document.getElementById('prevBtn');
 var nextBtn=document.getElementById('nextBtn');
 var flipBtn=document.getElementById('flipBtn');
 var voiceBtn=document.getElementById('voiceBtn');
+var shareBtn=document.getElementById('shareBtn');
+var shareModal=document.getElementById('shareModal');
+var closeShareModal=document.getElementById('closeShareModal');
+var shareUrlInput=document.getElementById('shareUrlInput');
+var shareQrCode=document.getElementById('shareQrCode');
+var shareCardTitle=document.getElementById('shareCardTitle');
+var copyShareBtn=document.getElementById('copyShareBtn');
 var hzPrev=document.getElementById('hzPrev');
 var hzNext=document.getElementById('hzNext');
 var hzFlip=document.getElementById('hzFlip');
@@ -712,7 +719,119 @@ if(window.speechSynthesis){
   window.speechSynthesis.onvoiceschanged=function(){ window.speechSynthesis.getVoices(); };
 }
 
-setDeckById('all');
+// Share functionality
+function generateShareUrl(deckId,cardIndex,language){
+  var baseUrl=window.location.origin+window.location.pathname;
+  var params=new URLSearchParams();
+  params.set('deck',deckId);
+  params.set('card',String(cardIndex));
+  if(language){ params.set('lang',language); }
+  return baseUrl+'?'+params.toString();
+}
+
+function parseShareUrl(){
+  var params=new URLSearchParams(window.location.search);
+  var deckId=params.get('deck');
+  var cardIndexParam=params.get('card');
+  var language=params.get('lang');
+  var cardIndex=cardIndexParam?parseInt(cardIndexParam,10):null;
+  return{
+    deckId:deckId,
+    cardIndex:cardIndex!==null&&!isNaN(cardIndex)?cardIndex:null,
+    language:language
+  };
+}
+
+async function copyToClipboard(text){
+  if(navigator.clipboard){
+    try{
+      await navigator.clipboard.writeText(text);
+      return true;
+    }catch{
+      return false;
+    }
+  }else{
+    try{
+      var textArea=document.createElement('textarea');
+      textArea.value=text;
+      textArea.style.position='fixed';
+      textArea.style.opacity='0';
+      document.body.appendChild(textArea);
+      textArea.select();
+      var success=document.execCommand('copy');
+      document.body.removeChild(textArea);
+      return success;
+    }catch{
+      return false;
+    }
+  }
+}
+
+function showShareModal(){
+  if(!shareModal||!currentDeck.cards||!currentDeck.cards.length)return;
+  var item=currentDeck.cards[index];
+  if(!item)return;
+  var shareUrl=generateShareUrl(currentDeck.id,index);
+  if(shareQrCode){
+    shareQrCode.src='https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=2&data='+encodeURIComponent(shareUrl);
+  }
+  if(shareUrlInput){ shareUrlInput.value=shareUrl; }
+  if(shareCardTitle){ shareCardTitle.textContent='"'+item.front+'"'; }
+  if(shareModal){ shareModal.style.display='flex'; }
+}
+
+function hideShareModal(){
+  if(shareModal){ shareModal.style.display='none'; }
+}
+
+if(shareBtn){
+  shareBtn.addEventListener('click',showShareModal);
+}
+
+if(closeShareModal&&shareModal){
+  closeShareModal.addEventListener('click',hideShareModal);
+}
+
+if(shareModal){
+  shareModal.addEventListener('click',function(e){
+    if(e.target===shareModal){ hideShareModal(); }
+  });
+}
+
+if(copyShareBtn&&shareUrlInput){
+  copyShareBtn.addEventListener('click',async function(){
+    var url=shareUrlInput.value;
+    var success=await copyToClipboard(url);
+    if(success){
+      copyShareBtn.textContent='Copied!';
+      copyShareBtn.style.background='#16a34a';
+      setTimeout(function(){
+        copyShareBtn.textContent='Copy';
+        copyShareBtn.style.background='var(--accent)';
+      },2000);
+    }
+  });
+}
+
+// Handle deep linking from share URLs
+var shareParams=parseShareUrl();
+if(shareParams.deckId&&shareParams.cardIndex!==null){
+  if(shareParams.language&&['en','es','fr','de'].indexOf(shareParams.language)!==-1){
+    // Language preference would be set here if we had language support in single-file version
+  }
+  setDeckById(shareParams.deckId);
+  setTimeout(function(){
+    if(shareParams.cardIndex!==null){
+      index=shareParams.cardIndex;
+      render();
+    }
+    var url=new URL(window.location.href);
+    url.search='';
+    window.history.replaceState({},'',url.toString());
+  },100);
+}else{
+  setDeckById('all');
+}
 
 // Search functionality
 if(searchInput){

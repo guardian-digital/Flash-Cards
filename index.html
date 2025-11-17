@@ -173,6 +173,7 @@
       </div>
       <div class="controls-row">
         <button id="voiceBtn" class="secondary" aria-label="Toggle voice narration">Voice</button>
+        <button id="shareBtn" class="secondary" aria-label="Share this card">Share</button>
       </div>
     </div>
     <div class="hint">
@@ -183,6 +184,32 @@
       <div>Scottsdale Cart Tours</div>
       <button id="reviewBtn" class="review-link" aria-label="Leave a review" style="color:var(--accent);background:none;border:none;text-decoration:underline;cursor:pointer;font-size:12px;padding:0;">Leave a Review</button>
     </footer>
+    <div id="shareModal" class="review-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:50;align-items:center;justify-content:center;padding:16px;">
+      <div class="review-modal-content" style="background:var(--card);border-radius:16px;padding:24px;max-width:400px;width:100%;box-shadow:0 8px 24px rgba(0,0,0,0.45);" onclick="event.stopPropagation();">
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px;">
+          <h3 style="font-size:20px;font-weight:700;color:var(--fg);margin:0;">Share This Card</h3>
+          <button id="closeShareModal" style="background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:8px;">Share this flashcard with others:</p>
+        <p id="shareCardTitle" style="color:var(--muted);font-size:12px;font-style:italic;margin-bottom:24px;"></p>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:24px;">
+          <div style="background:white;padding:16px;border-radius:8px;">
+            <img id="shareQrCode" src="" alt="QR code to share this card" style="width:200px;height:200px;" onerror="this.style.display='none';this.parentElement.innerHTML='<p style=\'font-size:12px;color:var(--muted);\'>QR code unavailable</p>';" />
+          </div>
+          <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:-8px;">Scan with your phone camera</p>
+          <div style="width:100%;display:flex;gap:8px;">
+            <input type="text" id="shareUrlInput" readonly style="flex:1;background:var(--card);color:var(--fg);border:1px solid rgba(255,255,255,0.18);border-radius:8px;padding:8px 12px;font-size:14px;" onclick="this.select();" />
+            <button id="copyShareBtn" style="padding:8px 16px;border-radius:8px;font-weight:600;font-size:14px;background:var(--accent);color:#111;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.25);">Copy</button>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--muted);text-align:center;">Anyone with this link can view this card</p>
+      </div>
+    </div>
     <div id="reviewModal" class="review-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:50;align-items:center;justify-content:center;padding:16px;">
       <div class="review-modal-content" style="background:var(--card);border-radius:16px;padding:24px;max-width:400px;width:100%;box-shadow:0 8px 24px rgba(0,0,0,0.45);" onclick="event.stopPropagation();">
         <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px;">
