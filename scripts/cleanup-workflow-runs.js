@@ -23,8 +23,8 @@ try {
   // Get in-progress and queued runs
   console.log('📋 Checking for in-progress/queued runs...');
   const activeRuns = execSync(
-    `gh run list --limit 100 --json databaseId,status,name --jq '.[] | select(.status == "in_progress" or .status == "queued") | .databaseId'`,
-    { encoding: 'utf-8' }
+    `gh run list --limit 100 --json databaseId,status,name --jq "[.[] | select(.status == \\"in_progress\\" or .status == \\"queued\\") | .databaseId] | .[]"`,
+    { encoding: 'utf-8', shell: true }
   ).trim();
 
   if (activeRuns) {
@@ -51,8 +51,8 @@ try {
     const cutoffISO = cutoffDate.toISOString();
 
     const oldFailedRuns = execSync(
-      `gh run list --limit 1000 --json databaseId,status,conclusion,createdAt --jq ".[] | select(.conclusion == \\"failure\\" and .createdAt < \\"${cutoffISO}\\") | .databaseId"`,
-      { encoding: 'utf-8' }
+      `gh run list --limit 1000 --json databaseId,status,conclusion,createdAt --jq "[.[] | select(.conclusion == \\"failure\\" and .createdAt < \\"${cutoffISO}\\") | .databaseId] | .[]"`,
+      { encoding: 'utf-8', shell: true }
     ).trim();
 
     if (oldFailedRuns) {
