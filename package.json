@@ -25,7 +25,7 @@
     "handoff:generate": "node scripts/generate-agent-handoff.mjs",
     "workflow:cleanup": "node scripts/cleanup-workflow-runs.js",
     "workflow:cleanup:delete-old": "node scripts/cleanup-workflow-runs.js --delete-old",
-    "analyze": "ANALYZE=true pnpm build"
+    "analyze": "set ANALYZE=true && pnpm build"
   },
   "dependencies": {
     "next": "^16.0.3",

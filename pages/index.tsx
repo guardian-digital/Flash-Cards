@@ -28,17 +28,6 @@ const ReviewPrompt = lazy(() => import('@/components/ReviewPrompt').then((mod) =
 const InstallPrompt = lazy(() => import('@/components/InstallPrompt').then((mod) => ({ default: mod.InstallPrompt })));
 const ShareModal = lazy(() => import('@/components/ShareModal').then((mod) => ({ default: mod.ShareModal })));
 
-// Loading skeleton component for better perceived performance
-function LoadingSkeleton() {
-  return (
-    <div className="animate-pulse">
-      <div className="h-8 bg-surface/50 rounded w-3/4 mb-4"></div>
-      <div className="h-4 bg-surface/50 rounded w-full mb-2"></div>
-      <div className="h-4 bg-surface/50 rounded w-5/6"></div>
-    </div>
-  );
-}
-
 export default function HomePage() {
   const [baseDeck, setBaseDeck] = useState<Deck>(getAllDeck());
   const [index, setIndex] = useState(0);
