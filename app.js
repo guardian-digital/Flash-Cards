@@ -746,19 +746,32 @@ function touchStart(x,y){
   startY=y; 
   moved=false; 
 } 
-function touchMove(x,y){ 
-  if(Math.abs(x-startX)>10) moved=true; 
+function touchMove(e,x,y){ 
+  if(!startX||!startY)return;
+  var dx=Math.abs(x-startX);
+  var dy=Math.abs(y-startY);
+  if(dx>5){ 
+    moved=true; 
+    if(dx>dy*1.5){ 
+      e.preventDefault(); 
+      e.stopPropagation(); 
+    } 
+  }
 } 
-function touchEnd(x,y){ 
+function touchEnd(e,x,y){ 
+  if(!startX||!startY)return;
   var dx=x-startX; 
   var dy=y-startY; 
   var absDx=Math.abs(dx);
   var absDy=Math.abs(dy);
-  if(absDx>absDy&&absDx>50){ 
+  // Lowered threshold from 50px to 30px for better responsiveness
+  if(absDx>absDy*1.2&&absDx>30){ 
+    e.preventDefault();
+    e.stopPropagation();
     if(dx<0){ next(); } 
     else { prev(); } 
   } else { 
-    if(!moved) flip(); 
+    if(!moved&&absDx<10&&absDy<10) flip(); 
   } 
   startX=0;
   startY=0;
@@ -771,18 +784,11 @@ cardEl.addEventListener('touchstart',function(e){
 cardEl.addEventListener('touchmove',function(e){ 
   var t=e.touches[0]; 
   if(!t) return;
-  var deltaX=Math.abs(t.clientX-startX);
-  var deltaY=Math.abs(t.clientY-startY);
-  // Prevent scrolling when swiping horizontally (iOS needs this)
-  if(deltaX>deltaY&&deltaX>10){
-    e.preventDefault();
-    e.stopPropagation();
-  }
-  touchMove(t.clientX,t.clientY); 
+  touchMove(e,t.clientX,t.clientY); 
 },{passive:false});
 cardEl.addEventListener('touchend',function(e){ 
   var t=e.changedTouches[0]; 
-  if(t){ touchEnd(t.clientX,t.clientY); }
+  if(t){ touchEnd(e,t.clientX,t.clientY); }
 },{passive:false});
 
 // Load voices when available (Chrome needs this)

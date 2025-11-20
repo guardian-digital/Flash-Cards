@@ -6,7 +6,7 @@
  * PROPRIETARY - Unauthorized use prohibited.
  */
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useCallback } from 'react';
 import type { Card } from '@/lib/data';
 
 type FlashCardProps = {
@@ -95,7 +95,7 @@ export function FlashCard({
           'flex items-stretch justify-center select-none text-left',
           flipped ? '[transform:rotateY(180deg)]' : '',
         ].join(' ')}
-        style={{ touchAction: 'pan-x pan-y' }}
+        style={{ touchAction: 'pan-y' }}
     >
       {/* Favorite button - positioned absolutely, visible on both sides */}
       {onToggleFavorite && (

@@ -328,10 +328,10 @@ export default function HomePage() {
     const deltaY = Math.abs(t.clientY - start.y);
     
     // If horizontal movement is significant, mark as moved and prevent default
-    if (deltaX > 10) {
+    if (deltaX > 5) {
       movedRef.current = true;
       // Prevent scrolling when swiping horizontally (iOS needs this)
-      if (deltaX > deltaY) {
+      if (deltaX > deltaY * 1.5) {
         e.preventDefault();
         e.stopPropagation();
       }
@@ -353,12 +353,15 @@ export default function HomePage() {
     const absDy = Math.abs(dy);
     
     // Swipe detection: horizontal movement must be greater than vertical and exceed threshold
-    if (absDx > absDy && absDx > 50) {
+    // Lowered threshold from 50px to 30px for better responsiveness
+    if (absDx > absDy * 1.2 && absDx > 30) {
       e.preventDefault();
       e.stopPropagation();
       if (dx < 0) {
+        // Swipe left = next
         next();
       } else {
+        // Swipe right = previous
         prev();
       }
     } else if (!movedRef.current && absDx < 10 && absDy < 10) {
