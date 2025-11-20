@@ -1,145 +1,134 @@
-# Testing Guide
+# Flash-Cards — Testing Guidelines
 
-This project includes both unit tests and end-to-end (E2E) tests to ensure code quality and functionality.
+**Last Updated**: 2025-11-20
 
-## Test Structure
+## Testing Philosophy
 
-```
-├── __tests__/          # Unit tests (Jest)
-│   └── sync-decks.test.js
-├── e2e/                # E2E tests (Playwright)
-│   └── app.spec.ts
-├── jest.config.js      # Jest configuration
-└── playwright.config.ts # Playwright configuration
-```
+- **Local First**: All testing should be done locally before pushing
+- **Overnight Work**: CI/CD tests are disabled during overnight hours to save costs
+- **Manual Triggers**: CI can be manually triggered via workflow_dispatch if needed
 
-## Unit Tests (Jest)
+## Local Testing
 
-Unit tests focus on testing individual functions and scripts in isolation.
-
-### Running Unit Tests
-
+### Unit Tests
 ```bash
-pnpm test              # Run all unit tests
-pnpm test:watch        # Run in watch mode (auto-rerun on changes)
-pnpm test:coverage      # Generate coverage report
+# Run all unit tests
+pnpm test
+
+# Watch mode for development
+pnpm test:watch
+
+# Coverage report
+pnpm test:coverage
 ```
 
-### What's Tested
-
-- **sync-decks.js**: Tests the data synchronization script that converts TypeScript DECKS array to JavaScript
-  - Parsing TypeScript array syntax
-  - Handling apostrophes in card text
-  - JSON conversion and validation
-  - Preserving deck structure properties
-
-### Writing Unit Tests
-
-Create test files in `__tests__/` with the pattern `*.test.js`:
-
-```javascript
-describe('MyScript', () => {
-  test('should do something', () => {
-    expect(true).toBe(true);
-  });
-});
-```
-
-## E2E Tests (Playwright)
-
-E2E tests verify the complete user flow in the browser.
-
-### Running E2E Tests
-
-**Important**: For local development, start the dev server manually first:
-
+### E2E Tests
 ```bash
-# Terminal 1: Start the dev server
-pnpm dev
+# Run all E2E tests
+pnpm test:e2e
 
-# Terminal 2: Run E2E tests
-pnpm test:e2e          # Run all E2E tests
-pnpm test:e2e:ui      # Run with Playwright UI mode (interactive)
+# Interactive UI mode
+pnpm test:e2e:ui
+
+# Single browser (faster)
+pnpm test:e2e:local
 ```
 
-Or use the helper script:
+### All Tests
 ```bash
-node scripts/start-dev-server.js  # Starts server and waits for it to be ready
+# Run both unit and E2E tests
+pnpm test:all
 ```
 
-**Note**: In CI, the server starts automatically. For local testing, you need to start it manually.
+## CI/CD Testing
 
-### What's Tested
+### Automatic Runs
+- CI runs automatically on:
+  - Push to `main` branch
+  - Pull requests to `main` branch
+- **Overnight Policy**: CI is configured to skip automatic runs during overnight hours (00:00-08:00 UTC) to save costs
 
-- **App Initialization**: App loads and displays correctly
-- **Card Display**: Cards render with front/back content
-- **Card Flipping**: Click to flip functionality
-- **Navigation**: Next/Previous button navigation
-- **Deck Selection**: Changing decks via dropdown
-- **Controls**: Voice, Shuffle, Auto-advance toggles
-- **Keyboard Navigation**: Arrow keys, Space, Enter
-- **Mobile Gestures**: Swipe gestures on mobile viewports
-- **Accessibility**: ARIA labels and keyboard navigation
-
-### Writing E2E Tests
-
-Create test files in `e2e/` with the pattern `*.spec.ts`:
-
-```typescript
-import { test, expect } from '@playwright/test';
-
-test('should do something', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.getByRole('heading')).toBeVisible();
-});
-```
-
-## CI/CD Integration
-
-Tests run automatically on:
-- Every push to `main`
-- Every pull request
-
-The CI workflow includes:
-1. **Build & Lint**: TypeScript check, ESLint, Next.js build
-2. **Unit Tests**: Jest test suite
-3. **E2E Tests**: Playwright test suite (with browser installation and automatic server startup)
+### Manual Triggers
+If you need to run CI tests manually:
+1. Go to GitHub Actions tab
+2. Select the "CI" workflow
+3. Click "Run workflow"
+4. Select branch and click "Run workflow"
 
 ## Test Coverage
 
-View coverage reports:
-- **Unit tests**: `coverage/lcov-report/index.html` (after running `pnpm test:coverage`)
-- **E2E tests**: `playwright-report/index.html` (after running `pnpm test:e2e`)
+### Current Coverage
+- **Unit Tests**: Jest for utility functions and components
+- **E2E Tests**: Playwright for full user flows
+- **Type Checking**: TypeScript compiler
 
-## Troubleshooting
-
-### E2E Tests Timeout Waiting for Server
-
-If you see "Timed out waiting for webServer", make sure:
-1. The dev server is running: `pnpm dev` (in a separate terminal)
-2. Port 3000 is not already in use
-3. The server has fully started (wait for "Ready" message)
-
-### Unit Tests Fail
-- Check that test files are in `__tests__/` directory
-- Verify Jest configuration in `jest.config.js`
-- Run with `--verbose` flag for more details
-
-### E2E Tests Fail
-- Ensure Next.js dev server is running (or use `webServer` in config)
-- Check browser installation: `pnpm exec playwright install`
-- Run with `--headed` flag to see browser: `pnpm test:e2e --headed`
-- Check Playwright trace: `playwright-report/`
-
-### Tests Timeout
-- Increase timeout in test file: `test.setTimeout(60000)`
-- Check for slow operations (network requests, animations)
-- Verify test environment matches CI environment
+### Coverage Goals
+- Unit test coverage: > 80%
+- E2E test coverage: All critical user flows
+- Type coverage: 100% (strict TypeScript)
 
 ## Best Practices
 
-1. **Unit Tests**: Test one thing at a time, use descriptive test names
-2. **E2E Tests**: Test user flows, not implementation details
-3. **Keep Tests Fast**: Unit tests should be < 1s, E2E tests < 30s each
-4. **Isolation**: Each test should be independent and not rely on others
-5. **Cleanup**: Clean up test data and state after each test
+1. **Run tests locally before committing**
+   ```bash
+   pnpm test:all
+   ```
+
+2. **Fix failing tests before pushing**
+   - Don't push broken tests
+   - Don't skip tests with `skip` or `only`
+
+3. **Write tests for new features**
+   - Unit tests for utility functions
+   - E2E tests for user-facing features
+
+4. **Keep tests fast**
+   - Unit tests should be < 5 seconds
+   - E2E tests should be < 30 seconds total
+
+5. **Overnight work**
+   - Run tests locally only
+   - CI will run automatically on next push during business hours
+
+## Troubleshooting
+
+### Tests failing locally
+1. Check Node.js version (should be 20+)
+2. Run `pnpm install` to ensure dependencies are up to date
+3. Clear cache: `rm -rf .next node_modules/.cache`
+4. Check for TypeScript errors: `pnpm type-check`
+
+### E2E tests failing
+1. Ensure Playwright browsers are installed: `pnpm exec playwright install`
+2. Check that the dev server is running: `pnpm dev`
+3. Run with UI mode to see what's happening: `pnpm test:e2e:ui`
+
+### CI tests failing
+1. Check the GitHub Actions logs
+2. Reproduce locally with the same Node.js version
+3. Ensure all dependencies are committed (lockfile is up to date)
+
+## Test Files Structure
+
+```
+__tests__/          # Unit tests (Jest)
+e2e/                # E2E tests (Playwright)
+  app.spec.ts       # Main app E2E tests
+playwright.config.ts # Playwright configuration
+jest.config.js      # Jest configuration
+```
+
+## Continuous Integration
+
+### Workflow Configuration
+- **File**: `.github/workflows/ci.yml`
+- **Triggers**: Push to main, PRs, manual dispatch
+- **Jobs**: Build, Unit Tests, E2E Tests
+- **Timeout**: 10min build, 5min unit tests, 15min E2E tests
+- **Artifact Retention**: 7 days (cost optimization)
+
+### Cost Optimization
+- Concurrency control cancels duplicate runs
+- Timeout limits prevent runaway processes
+- Reduced artifact retention (7 days vs 30 days)
+- Overnight hours skip automatic runs

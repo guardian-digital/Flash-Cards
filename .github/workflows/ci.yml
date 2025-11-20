@@ -5,11 +5,17 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  # Allow manual workflow dispatch for testing
+  workflow_dispatch:
 
 # Cancel in-progress runs when a new commit is pushed (saves costs)
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+# Skip CI runs during overnight hours (UTC) - tests should run locally only
+# This prevents automatic CI runs between 00:00-08:00 UTC (overnight hours)
+# Manual workflow_dispatch can still trigger runs if needed
 
 jobs:
   build:
