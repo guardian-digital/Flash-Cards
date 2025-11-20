@@ -423,11 +423,11 @@ export default function HomePage() {
         role="application"
         aria-label="Old Town Scottsdale Tour Flashcards"
       >
-        <header className="flex flex-col gap-1.5 sm:gap-2 mb-1 sm:mb-2">
-              <div className="flex justify-center mb-2">
-                <img src="/logo.svg" alt={BRAND.company} className="h-24 sm:h-28 md:h-32" />
+        <header className="flex flex-col gap-1 sm:gap-2 mb-1 sm:mb-2">
+              <div className="flex justify-center mb-1 sm:mb-2">
+                <img src="/logo.svg" alt={BRAND.company} className="h-20 sm:h-28 md:h-32" />
               </div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold m-0 leading-tight">{t('app.title', language)}</h1>
+          <h1 className="text-lg sm:text-2xl md:text-3xl font-bold m-0 leading-tight">{t('app.title', language)}</h1>
           <SearchInput
             value={searchQuery}
             onChange={setSearchQuery}

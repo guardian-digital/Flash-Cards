@@ -90,7 +90,7 @@ export function FlashCard({
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
         className={[
-          'w-full min-h-[50vh] sm:min-h-[46vh] bg-surface rounded-xl sm:rounded-lg p-4 sm:p-5 md:p-6 shadow-overlay',
+          'w-full min-h-[45vh] sm:min-h-[46vh] bg-surface rounded-xl sm:rounded-lg p-3 sm:p-5 md:p-6 shadow-overlay',
           'relative preserve-3d transition-transform duration-500 ease-out',
           'flex items-stretch justify-center select-none text-left',
           flipped ? '[transform:rotateY(180deg)]' : '',
